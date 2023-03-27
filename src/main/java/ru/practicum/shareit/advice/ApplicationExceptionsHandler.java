@@ -43,7 +43,7 @@ public class ApplicationExceptionsHandler {
         int httpCode = 404;
         switch (objectName) {
             case "userDto":
-                if (errorMap.containsKey("email")){
+                if (errorMap.containsKey("email")) {
                     httpCode = 400;
                 }
                 break;

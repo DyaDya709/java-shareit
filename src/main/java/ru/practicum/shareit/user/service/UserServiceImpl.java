@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.service;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -11,7 +10,7 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {

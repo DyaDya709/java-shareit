@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -31,11 +30,11 @@ public class ItemServiceImpl implements ItemService {
             throw new BadRequestException("bad request, userId is missing");
         }
         if (!userRepository.isUserPresent(userId)) {
-            throw new NotFoundException(String.format("user with id %s not found",userId));
+            throw new NotFoundException(String.format("user with id %s not found", userId));
         }
         User user = userRepository.get(userId);
         if (user == null) {
-            throw new NotFoundException(String.format("user with id %s not found",userId));
+            throw new NotFoundException(String.format("user with id %s not found", userId));
         }
         if (itemDto.getName() == null || itemDto.getName().isEmpty()) {
             throw new BadRequestException("bad request, name is empty");
@@ -61,14 +60,14 @@ public class ItemServiceImpl implements ItemService {
         }
         Item item = itemRepository.get(itemId);
         if (item == null) {
-            throw new NotFoundException(String.format("item with id %s not found",itemId));
+            throw new NotFoundException(String.format("item with id %s not found", itemId));
         }
         if (!item.getOwnerId().equals(userId)) {
             throw new NotFoundException("wrong item owner");
         }
         User user = userRepository.get(userId);
         if (user == null) {
-            throw new NotFoundException(String.format("user with id %s not found",userId));
+            throw new NotFoundException(String.format("user with id %s not found", userId));
         }
         if (itemDto.getName() != null && !itemDto.getName().isEmpty() && !itemDto.getName().equals(item.getName())) {
             item.setName(itemDto.getName());
