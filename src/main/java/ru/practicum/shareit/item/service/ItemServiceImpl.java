@@ -16,12 +16,12 @@ import java.util.List;
 @Service
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final ItemRepository ITEM_REPOSITORY;
+    private final UserRepository USER_REPOSITORY;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
+    public ItemServiceImpl(ItemRepository ITEM_REPOSITORY, UserRepository USER_REPOSITORY) {
+        this.ITEM_REPOSITORY = ITEM_REPOSITORY;
+        this.USER_REPOSITORY = USER_REPOSITORY;
     }
 
     @Override
@@ -29,10 +29,10 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new BadRequestException("bad request, userId is missing");
         }
-        if (!userRepository.isUserPresent(userId)) {
+        if (!USER_REPOSITORY.isUserPresent(userId)) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
-        User user = userRepository.get(userId);
+        User user = USER_REPOSITORY.get(userId);
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() == null) {
             throw new BadRequestException("bad request, available is empty");
         }
-        Item item = itemRepository.create(ItemMapper.makeItem(itemDto));
+        Item item = ITEM_REPOSITORY.create(ItemMapper.makeItem(itemDto));
         item.setOwnerId(userId);
         return item;
     }
@@ -58,14 +58,14 @@ public class ItemServiceImpl implements ItemService {
         if (itemId == null) {
             throw new BadRequestException("bad request, itemId is missing");
         }
-        Item item = itemRepository.get(itemId);
+        Item item = ITEM_REPOSITORY.get(itemId);
         if (item == null) {
             throw new NotFoundException(String.format("item with id %s not found", itemId));
         }
         if (!item.getOwnerId().equals(userId)) {
             throw new NotFoundException("wrong item owner");
         }
-        User user = userRepository.get(userId);
+        User user = USER_REPOSITORY.get(userId);
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
@@ -79,22 +79,22 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null && !itemDto.getAvailable().equals(item.getAvailable())) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return itemRepository.update(item);
+        return ITEM_REPOSITORY.update(item);
     }
 
     @Override
     public Item get(Long itemId) {
-        return itemRepository.get(itemId);
+        return ITEM_REPOSITORY.get(itemId);
     }
 
     @Override
     public List<Item> getAll(Long userId) {
-        return itemRepository.getAll(userId);
+        return ITEM_REPOSITORY.getAll(userId);
     }
 
     @Override
     public Boolean remove(Long itemId) {
-        return itemRepository.remove(itemId);
+        return ITEM_REPOSITORY.remove(itemId);
     }
 
     @Override
@@ -102,6 +102,6 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemRepository.findAvailable(text);
+        return ITEM_REPOSITORY.findAvailable(text);
     }
 }

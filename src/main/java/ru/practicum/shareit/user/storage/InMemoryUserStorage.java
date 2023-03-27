@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserStorage implements UserRepository {
-    private final HashMap<String, User> STORAGE = new HashMap<>();
+    private final HashMap<String, User> USER_STORAGE = new HashMap<>();
 
     private Long newId = 0L;
 
@@ -29,13 +29,13 @@ public class InMemoryUserStorage implements UserRepository {
             throw new ConflictException(String.format("mail %s is not unique", user.getEmail()));
         }
         user.setId(getNewId());
-        STORAGE.put(user.getEmail(), user);
+        USER_STORAGE.put(user.getEmail(), user);
         return user;
     }
 
     @Override
     public User update(Long userId, User user) {
-        User presentUser = STORAGE.values().stream()
+        User presentUser = USER_STORAGE.values().stream()
                 .filter(u -> u.getId().equals(userId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(String.format("user with id %s not found", userId)));
@@ -45,8 +45,8 @@ public class InMemoryUserStorage implements UserRepository {
             }
             String oldEmail = presentUser.getEmail();
             presentUser.setEmail(user.getEmail());
-            STORAGE.remove(oldEmail);
-            STORAGE.put(presentUser.getEmail(), presentUser);
+            USER_STORAGE.remove(oldEmail);
+            USER_STORAGE.put(presentUser.getEmail(), presentUser);
         }
         if (user.getName() != null && !user.getName().isEmpty() && !user.getName().equals(presentUser.getName())) {
             presentUser.setName(user.getName());
@@ -56,7 +56,7 @@ public class InMemoryUserStorage implements UserRepository {
 
     @Override
     public User get(Long userId) {
-        return STORAGE.values().stream()
+        return USER_STORAGE.values().stream()
                 .filter(user -> user.getId().equals(userId))
                 .findFirst()
                 .orElse(null);
@@ -64,23 +64,23 @@ public class InMemoryUserStorage implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return STORAGE.values().stream().collect(Collectors.toList());
+        return USER_STORAGE.values().stream().collect(Collectors.toList());
     }
 
     @Override
     public Boolean remove(Long userId) {
-        STORAGE.values().removeIf(user -> user.getId().equals(userId));
+        USER_STORAGE.values().removeIf(user -> user.getId().equals(userId));
         return true;
     }
 
     @Override
     public Boolean isUniqEmail(String email) {
-        return !STORAGE.containsKey(email);
+        return !USER_STORAGE.containsKey(email);
     }
 
     @Override
     public Boolean isUserPresent(Long userId) {
-        return STORAGE.values().stream()
+        return USER_STORAGE.values().stream()
                 .filter(u -> u.getId().equals(userId))
                 .findFirst()
                 .isPresent();

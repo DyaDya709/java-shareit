@@ -11,37 +11,37 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+    private final UserRepository USER_REPOSITORY;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository USER_REPOSITORY) {
+        this.USER_REPOSITORY = USER_REPOSITORY;
     }
 
     @Override
     public User create(UserDto userDto) {
-        if (userRepository.isUniqEmail(userDto.getEmail())) {
-            return userRepository.create(UserMapper.makeUser(userDto));
+        if (USER_REPOSITORY.isUniqEmail(userDto.getEmail())) {
+            return USER_REPOSITORY.create(UserMapper.makeUser(userDto));
         }
         throw new ConflictException(String.format("mail %s is not unique", userDto.getEmail()));
     }
 
     @Override
     public User update(Long userId, UserDto userDto) {
-        return userRepository.update(userId, UserMapper.makeUser(userDto));
+        return USER_REPOSITORY.update(userId, UserMapper.makeUser(userDto));
     }
 
     @Override
     public List<User> getUsers() {
-        return userRepository.getAll();
+        return USER_REPOSITORY.getAll();
     }
 
     @Override
     public User getUser(Long id) {
-        return userRepository.get(id);
+        return USER_REPOSITORY.get(id);
     }
 
     @Override
     public Boolean remove(Long id) {
-        return userRepository.remove(id);
+        return USER_REPOSITORY.remove(id);
     }
 }
