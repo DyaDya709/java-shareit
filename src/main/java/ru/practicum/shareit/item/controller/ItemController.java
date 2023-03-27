@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -14,33 +14,31 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/items")
+@RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
 
-    @Autowired
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+    private final String userIdRequestHeader = "X-Sharer-User-Id";
 
     @PostMapping
-    public Item create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public Item create(@RequestHeader(userIdRequestHeader) Long userId, @Valid @RequestBody ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                       @PathVariable("itemId") Long itemId,
+    public Item update(@RequestHeader(userIdRequestHeader) Long userId,
+                       @PathVariable Long itemId,
                        @RequestBody ItemDto itemDto) {
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public Item get(@PathVariable("itemId") Long itemId) {
+    public Item get(@PathVariable Long itemId) {
         return itemService.get(itemId);
     }
 
     @GetMapping
-    public List<Item> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<Item> getAll(@RequestHeader(userIdRequestHeader) Long userId) {
         return itemService.getAll(userId);
     }
 

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -14,15 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public Item create(Long userId, ItemDto itemDto) {

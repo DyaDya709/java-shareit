@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class ItemDto {
     @NotNull
-    String name;
+    private String name;
     @NotNull
-    String description;
+    private String description;
     @NotNull
-    Boolean available;
+    private Boolean available;
 }
