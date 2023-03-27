@@ -33,15 +33,6 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
-        if (itemDto.getName() == null || itemDto.getName().isEmpty()) {
-            throw new BadRequestException("bad request, name is empty");
-        }
-        if (itemDto.getDescription() == null || itemDto.getDescription().isEmpty()) {
-            throw new BadRequestException("bad request, description is empty");
-        }
-        if (itemDto.getAvailable() == null) {
-            throw new BadRequestException("bad request, available is empty");
-        }
         Item item = itemRepository.create(ItemMapper.makeItem(itemDto));
         item.setOwnerId(userId);
         return item;
