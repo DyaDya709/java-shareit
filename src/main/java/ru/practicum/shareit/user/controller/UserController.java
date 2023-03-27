@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable("userId") Optional<Long> id, @Valid @RequestBody UserDto itemDto) {
+    public User update(@PathVariable("userId") Optional<Long> id, @RequestBody UserDto itemDto) {
         if (!id.isPresent()) {
             throw new BadRequestException("id missing");
         }

@@ -20,13 +20,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User create(UserDto userDto) {
-        if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
-            throw new BadRequestException("empty email");
-        }
         if (userRepository.isUniqEmail(userDto.getEmail())) {
             return userRepository.create(UserMapper.makeUser(userDto));
         }
-        throw new ConflictException(String.format("mail %s is not unique",userDto.getEmail()));
+        throw new ConflictException(String.format("mail %s is not unique", userDto.getEmail()));
     }
 
     @Override
