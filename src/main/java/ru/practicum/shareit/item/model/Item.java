@@ -13,5 +13,5 @@ public class Item {
     Long ownerId;
     String name;
     String description;
-    Boolean isAvailable;
+    Boolean available;
 }

@@ -48,9 +48,10 @@ public class ApplicationExceptionsHandler {
                 }
                 break;
             case "itemDto":
-//                if (errorMap.containsKey("login") || errorMap.containsKey("birthday")) {
-//                    httpCode = 400;
-//                }
+                if (errorMap.containsKey("name") || errorMap.containsKey("description") ||
+                        errorMap.containsKey("available")) {
+                    httpCode = 400;
+                }
                 break;
         }
         return new ResponseEntity<>(errorMap, HttpStatus.resolve(httpCode));

@@ -11,4 +11,5 @@ public interface UserRepository {
     List<User> getAll();
     Boolean remove(Long userId);
     Boolean isUniqEmail(String email);
+    Boolean isUserPresent(Long userId);
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.HashMap;
@@ -14,10 +15,10 @@ import java.util.stream.Collectors;
 public class InMemoryUserStorage implements UserRepository {
     private final HashMap<String, User> storage = new HashMap<>();
 
-    private Long id = 0l;
+    private Long newId = 0l;
 
-    private long getId() {
-        return ++id;
+    private long getNewId() {
+        return ++newId;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class InMemoryUserStorage implements UserRepository {
         if (!isUniqEmail(user.getEmail())) {
             throw new ConflictException(String.format("mail %s is not unique", user.getEmail()));
         }
-        user.setId(getId());
+        user.setId(getNewId());
         storage.put(user.getEmail(), user);
         return user;
     }
@@ -38,10 +39,10 @@ public class InMemoryUserStorage implements UserRepository {
         User presentUser = storage.values().stream()
                 .filter(u -> u.getId().equals(userId))
                 .findFirst()
-                .orElseThrow(()->new NotFoundException(String.format("user with id %s not found",userId)));
+                .orElseThrow(() -> new NotFoundException(String.format("user with id %s not found", userId)));
         if (user.getEmail() != null && !user.getEmail().isEmpty() && !user.getEmail().equals(presentUser.getEmail())) {
             if (!isUniqEmail(user.getEmail())) {
-                throw new ConflictException(String.format("mail %s is not unique",user.getEmail()));
+                throw new ConflictException(String.format("mail %s is not unique", user.getEmail()));
             }
             String oldEmail = presentUser.getEmail();
             presentUser.setEmail(user.getEmail());
@@ -69,12 +70,20 @@ public class InMemoryUserStorage implements UserRepository {
 
     @Override
     public Boolean remove(Long userId) {
-         storage.values().removeIf(user -> user.getId().equals(userId));
-         return true;
+        storage.values().removeIf(user -> user.getId().equals(userId));
+        return true;
     }
 
     @Override
     public Boolean isUniqEmail(String email) {
         return !storage.containsKey(email);
+    }
+
+    @Override
+    public Boolean isUserPresent(Long userId) {
+        return storage.values().stream()
+                .filter(u -> u.getId().equals(userId))
+                .findFirst()
+                .isPresent();
     }
 }
