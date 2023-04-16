@@ -15,17 +15,19 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    private final UserMapper userMapper;
+
     @Override
     public User create(UserDto userDto) {
         if (userRepository.isUniqEmail(userDto.getEmail())) {
-            return userRepository.create(UserMapper.makeUser(userDto));
+            return userRepository.create(userMapper.toEntity(userDto));
         }
         throw new ConflictException(String.format("mail %s is not unique", userDto.getEmail()));
     }
 
     @Override
     public User update(Long userId, UserDto userDto) {
-        return userRepository.update(userId, UserMapper.makeUser(userDto));
+        return userRepository.update(userId, userMapper.toEntity(userDto));
     }
 
     @Override

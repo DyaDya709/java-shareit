@@ -20,6 +20,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemMapper itemMapper;
 
     @Override
     public Item create(Long userId, ItemDto itemDto) {
@@ -33,8 +34,8 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
-        Item item = itemRepository.create(ItemMapper.makeItem(itemDto));
-        item.setOwnerId(userId);
+        Item item = itemRepository.create(itemMapper.toEntity(itemDto));
+        item.setUser(userRepository.get(userId));
         return item;
     }
 
@@ -50,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
         if (item == null) {
             throw new NotFoundException(String.format("item with id %s not found", itemId));
         }
-        if (!item.getOwnerId().equals(userId)) {
+        if (!item.getUser().getId().equals(userId)) {
             throw new NotFoundException("wrong item owner");
         }
         User user = userRepository.get(userId);

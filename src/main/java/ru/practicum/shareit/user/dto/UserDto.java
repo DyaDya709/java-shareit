@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @Builder
 public class UserDto {
+    private Long id;
     @Email(message = "invalid email address")
     @NotNull
     private String email;

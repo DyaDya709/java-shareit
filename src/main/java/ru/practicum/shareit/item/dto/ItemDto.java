@@ -2,9 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import ru.practicum.shareit.user.dto.UserDto;
 
 /**
  * TODO Sprint add-controllers.
@@ -12,10 +10,9 @@ import javax.validation.constraints.NotNull;
 @Data
 @Builder
 public class ItemDto {
-    @NotEmpty
+    private Long id;
+    private UserDto user;
     private String name;
-    @NotEmpty
     private String description;
-    @NotNull
     private Boolean available;
 }
