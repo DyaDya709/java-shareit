@@ -25,7 +25,7 @@ public class BookingMapper {
         return BookingDto.builder()
                 .id(object.getId())
                 .itemId(object.getItem().getId())
-                .userId(object.getUser().getId())
+                .bookerId(object.getBooker().getId())
                 .startDate(localDateTimeToString(object.getStartDate()))
                 .endDate(localDateTimeToString(object.getEndDate()))
                 .status(object.getStatus())
@@ -36,7 +36,7 @@ public class BookingMapper {
         Booking booking = new Booking();
         booking.setId(object.getId());
         booking.setItem(itemService.get(object.getItemId()));
-        booking.setUser(userService.getUser(object.getUserId()));
+        booking.setBooker(userService.getUser(object.getBookerId()));
         booking.setStartDate(stringToLocalDateTime(object.getStartDate()));
         booking.setEndDate(stringToLocalDateTime(object.getEndDate()));
         booking.setStatus(object.getStatus());

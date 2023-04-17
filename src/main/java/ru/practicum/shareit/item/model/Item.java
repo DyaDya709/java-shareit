@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 

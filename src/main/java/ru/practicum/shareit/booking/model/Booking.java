@@ -22,15 +22,11 @@ public class Booking {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "booking_state")
-    private BookingStatus state;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     @JsonBackReference
-    private User user;
+    private User booker;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")

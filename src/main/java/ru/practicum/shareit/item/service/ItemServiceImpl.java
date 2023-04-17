@@ -52,7 +52,8 @@ public class ItemServiceImpl implements ItemService {
         if (itemId == null) {
             throw new BadRequestException("bad request, itemId is missing");
         }
-        Item item = itemJpaRepository.findById(itemId).orElse(null);;
+        Item item = itemJpaRepository.findById(itemId).orElse(null);
+        ;
         if (item == null) {
             throw new NotFoundException(String.format("item with id %s not found", itemId));
         }

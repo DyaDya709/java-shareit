@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -28,7 +26,7 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "booker")
     @ToString.Exclude
     @JsonManagedReference
     private List<Booking> bookings;
