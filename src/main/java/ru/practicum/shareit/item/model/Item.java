@@ -19,13 +19,10 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private long id;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    @JsonBackReference
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "name")
     private String name;
@@ -35,4 +32,5 @@ public class Item {
 
     @Column(name = "available")
     private Boolean available;
+
 }

@@ -33,7 +33,8 @@ public class User {
     @JsonManagedReference
     private List<Booking> bookings;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
     @JsonManagedReference
     private List<Item> items;

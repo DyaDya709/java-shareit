@@ -39,7 +39,7 @@ public class InMemoryItemStorage implements ItemRepository {
     @Override
     public List<Item> getAll(Long userId) {
         return itemStorage.values().stream()
-                .filter(i -> i.getUser().getId().equals(userId))
+                .filter(i -> i.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
 
