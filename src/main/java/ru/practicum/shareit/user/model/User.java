@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -22,7 +23,6 @@ public class User {
     private Long id;
 
     @Column(name = "email")
-    @Email(message = "invalid email address")
     private String email;
 
     @Column(name = "name")
