@@ -4,19 +4,20 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class BookingDto {
     private Long id;
-    @NotBlank
+    @Positive
     private Long itemId;
     private Long bookerId;
     @NotNull
-    private String startDate;
+    private String start;
     @NotNull
-    private String endDate;
+    private String end;
     private BookingStatus status;
 }

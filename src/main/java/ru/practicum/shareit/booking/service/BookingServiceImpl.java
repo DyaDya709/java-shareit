@@ -13,7 +13,6 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemJpaRepository;
-import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +30,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public Booking create(Long userId, BookingDto bookingDto) {
+        Item item = itemJpaRepository.findByIdIs(bookingDto.getItemId());
+        if (item == null || !item.getAvailable()) {
+            throw new BadRequestException("the item is unavailable");
+        }
         Booking booking = bookingMapper.toEntity(bookingDto);
         booking.setStatus(BookingStatus.WAITING);
         return bookingJpaRepository.save(booking);
@@ -38,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Booking confirmation(Long userId, Long bookingId, BookingStatus bookingStatus) {
+    public Booking confirmation(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingJpaRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
         List<Item> userItems = itemJpaRepository.findAllByUserId(userId);
@@ -46,7 +49,7 @@ public class BookingServiceImpl implements BookingService {
                 .filter(item -> item.getUserId().equals(userId))
                 .map(Item::getId)
                 .findFirst().orElseThrow(() -> new BadRequestException("the user is not the owner of the item"));
-        booking.setStatus(bookingStatus);
+        booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return bookingJpaRepository.save(booking);
     }
 
@@ -66,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
-        List<Booking> bookings = new ArrayList<>();
+        List<Booking> bookings;
         List<BookingStatus> status = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         switch (filter) {
@@ -115,7 +118,8 @@ public class BookingServiceImpl implements BookingService {
                 .map(Item::getId)
                 .collect(Collectors.toList());
         if (itemIds != null) {
-            return bookingJpaRepository.findAllByItemIdInOrderByStartDateAsc(itemIds);
+            List<BookingStatus> status = new ArrayList<>();
+            return bookingJpaRepository.findAllByItemIdInAndStatusInOrderByStartDateAsc(itemIds,status);
         }
         throw new NotFoundException("No items found");
     }

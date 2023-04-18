@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class BookingMapper {
     private final UserService userService;
     private final ItemService itemService;
-    private String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    private String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss.SS";
 
     public BookingMapper(UserService userService, ItemService itemService) {
         this.userService = userService;
@@ -26,8 +26,8 @@ public class BookingMapper {
                 .id(object.getId())
                 .itemId(object.getItem().getId())
                 .bookerId(object.getBooker().getId())
-                .startDate(localDateTimeToString(object.getStartDate()))
-                .endDate(localDateTimeToString(object.getEndDate()))
+                .start(localDateTimeToString(object.getStartDate()))
+                .end(localDateTimeToString(object.getEndDate()))
                 .status(object.getStatus())
                 .build();
     }
@@ -37,8 +37,8 @@ public class BookingMapper {
         booking.setId(object.getId());
         booking.setItem(itemService.get(object.getItemId()));
         booking.setBooker(userService.getUser(object.getBookerId()));
-        booking.setStartDate(stringToLocalDateTime(object.getStartDate()));
-        booking.setEndDate(stringToLocalDateTime(object.getEndDate()));
+        booking.setStartDate(stringToLocalDateTime(object.getStart()));
+        booking.setEndDate(stringToLocalDateTime(object.getEnd()));
         booking.setStatus(object.getStatus());
         return booking;
     }
