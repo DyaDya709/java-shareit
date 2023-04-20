@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.storage.BookingJpaRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -15,17 +18,17 @@ import ru.practicum.shareit.user.storage.UserJpaRepository;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
-
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
+    private final BookingJpaRepository bookingJpaRepository;
     private final ItemMapper itemMapper;
 
     @Override
@@ -80,13 +83,21 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item get(Long itemId) {
-        return itemJpaRepository.findById(itemId)
+        Item item = itemJpaRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("item with id %s not found", itemId)));
+        item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId())));
+        item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId())));
+        return item;
     }
 
     @Override
     public List<Item> getAll(Long userId) {
-        return itemJpaRepository.findAllByUserId(userId);
+        List<Item> items = itemJpaRepository.findAllByUserId(userId);
+        for (Item item : items) {
+            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId())));
+            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId())));
+        }
+        return items;
     }
 
     @Override

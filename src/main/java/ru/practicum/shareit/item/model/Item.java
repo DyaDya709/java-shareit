@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ru.practicum.shareit.booking.dto.BookingShortDto;
 
 import javax.persistence.*;
 
@@ -31,5 +32,11 @@ public class Item {
 
     @Column(name = "available")
     private Boolean available;
+
+    @Transient
+    BookingShortDto nextBooking;
+
+    @Transient
+    BookingShortDto lastBooking;
 
 }
