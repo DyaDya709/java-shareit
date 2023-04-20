@@ -37,4 +37,18 @@ public class BookingController {
                                                         value = "state") BookingFilter filter) {
         return bookingService.getAllBorrowerBookings(userId, filter);
     }
+
+    @GetMapping("/owner")
+    public List<Booking> getAllBookingByOwnerItems(@RequestHeader(requestHeaderUserId) long userId,
+                                                   @RequestParam(required = false,
+                                                           defaultValue = "ALL",
+                                                           value = "state") BookingFilter filter) {
+        return bookingService.getAllBookingByOwnerItems(userId, filter);
+    }
+
+    @GetMapping("/{bookingId}")
+    public Booking getByBookingId(@RequestHeader(requestHeaderUserId) long userId,
+                                 @PathVariable("bookingId") long bookingId) {
+        return bookingService.getByBookingId(userId, bookingId);
+    }
 }

@@ -8,23 +8,49 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findAllByBookerIdAndStatusInAndStartDateBeforeAndEndDateAfterOrderByStartDateAsc(Long bookerId,
-                                                                                                   List<BookingStatus> status,
-                                                                                                   LocalDateTime startDateTime,
-                                                                                                   LocalDateTime endDateTime);
+    //ищем по bookerId и статусу, дате начала Before и дате конца After (CURRENT)
+    List<Booking> findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(Long bookerId,
+                                                                                        List<BookingStatus> status,
+                                                                                        LocalDateTime startDateTime,
+                                                                                        LocalDateTime endDateTime);
 
-    List<Booking> findAllByBookerIdAndStatusInAndEndDateBeforeOrderByStartDateAsc(Long bookerId,
-                                                                                  List<BookingStatus> status,
-                                                                                  LocalDateTime dateTime);
+    //ищем по bookerId и статусу и дате конца Before (PAST)
+    List<Booking> findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(Long bookerId,
+                                                                           List<BookingStatus> status,
+                                                                           LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerIdAndStatusInAndStartDateAfterOrderByStartDateAsc(Long bookerId,
-                                                                                   List<BookingStatus> status,
-                                                                                   LocalDateTime dateTime);
+    //ищем по bookerId и статусу и дате начала After (FUTURE)
+    List<Booking> findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(Long bookerId,
+                                                                            List<BookingStatus> status,
+                                                                            LocalDateTime dateTime);
 
-    List<Booking> findAllByBookerIdAndStatusInOrderByStartDateAsc(Long bookerId,
-                                                                  List<BookingStatus> status);
+    //ищем по bookerId и статусу
+    List<Booking> findAllByBookerIdAndStatusInOrderByStartDesc(Long bookerId,
+                                                               List<BookingStatus> status);
 
-    List<Booking> findAllByItemIdInAndStatusInOrderByStartDateAsc(List<Long> itemIds, List<BookingStatus> status);
+    //ищем по bookerId
+    List<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
 
-    List<Booking> findAllByBookerIdOrderByStartDateAsc(Long bookerId);
+
+    //ищем по itemIds и статусу, дате начала Before и дате конца After (CURRENT)
+    List<Booking> findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(List<Long> itemIds,
+                                                                                        List<BookingStatus> status,
+                                                                                        LocalDateTime startDateTime,
+                                                                                        LocalDateTime endDateTime);
+
+    //ищем по itemIds и статусу и дате начала After (FUTURE)
+    List<Booking> findAllByItemIdInAndStatusInAndStartAfterOrderByStartDesc(List<Long> itemIds,
+                                                                            List<BookingStatus> status,
+                                                                            LocalDateTime startDateTime);
+
+    //ищем по itemIds и статусу и дате конца Before (PAST)
+    List<Booking> findAllByItemIdInAndStatusInAndEndBeforeOrderByStartDesc(List<Long> itemIds,
+                                                                           List<BookingStatus> status,
+                                                                           LocalDateTime endDateTime);
+
+    //ищем по itemId и статусу
+    List<Booking> findAllByItemIdInAndStatusInOrderByStartDesc(List<Long> itemIds, List<BookingStatus> status);
+
+    //ищем по itemId
+    List<Booking> findAllByItemIdInOrderByStartDesc(List<Long> itemIds);
 }

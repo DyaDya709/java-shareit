@@ -1,7 +1,10 @@
 package ru.practicum.shareit.booking.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,7 +28,8 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    @JsonBackReference
+    @JsonManagedReference
+    @JsonIgnoreProperties(value = {"items"})
     private User booker;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,10 +38,10 @@ public class Booking {
     private Item item;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDateTime start;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDateTime end;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

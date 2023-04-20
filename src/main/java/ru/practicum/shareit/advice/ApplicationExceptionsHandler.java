@@ -88,6 +88,11 @@ public class ApplicationExceptionsHandler {
                     httpCode = 400;
                 }
                 break;
+            case "bookingDto":
+                if (errorMap.containsKey("start") || errorMap.containsKey("end")) {
+                    httpCode = 400;
+                }
+                break;
         }
         return new ResponseEntity<>(errorMap, HttpStatus.resolve(httpCode));
     }

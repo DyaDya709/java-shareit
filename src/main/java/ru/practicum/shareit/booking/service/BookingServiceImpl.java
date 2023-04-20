@@ -13,6 +13,8 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemJpaRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,18 +27,37 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
     private final BookingJpaRepository bookingJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
+    private final UserJpaRepository userJpaRepository;
     private final BookingMapper bookingMapper;
 
     @Override
     @Transactional
     public Booking create(Long userId, BookingDto bookingDto) {
+        User user = userJpaRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found"));
         Item item = itemJpaRepository.findByIdIs(bookingDto.getItemId());
         if (item == null || !item.getAvailable()) {
-            throw new BadRequestException("the item is unavailable");
+            if (item == null) {
+                throw new NotFoundException("item not found");
+            } else {
+                throw new BadRequestException("the item is unavailable");
+            }
         }
+        bookingDto.setBookerId(userId);
         Booking booking = bookingMapper.toEntity(bookingDto);
+        if (booking.getEnd().isBefore(booking.getStart())) {
+            throw new BadRequestException("the end date is before the start date");
+        }
+        if (booking.getEnd().equals(booking.getStart())) {
+            throw new BadRequestException("the end date is equals the start date");
+        }
+        LocalDateTime now = LocalDateTime.now();
+        if (booking.getStart().isBefore(now) || booking.getEnd().isBefore(now)) {
+            throw new BadRequestException("the start date is before the end date");
+        }
         booking.setStatus(BookingStatus.WAITING);
-        return bookingJpaRepository.save(booking);
+        user.getBookings().add(booking);
+        Booking bookingDB = bookingJpaRepository.save(booking);
+        return bookingDB;
     }
 
     @Override
@@ -69,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
+        userJpaRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found"));
         List<Booking> bookings;
         List<BookingStatus> status = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
@@ -77,35 +99,35 @@ public class BookingServiceImpl implements BookingService {
                 status.clear();
                 status.add(BookingStatus.APPROVED);
                 bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndStartDateBeforeAndEndDateAfterOrderByStartDateAsc(userId, status, now, now);
+                        .findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(userId, status, now, now);
                 break;
             case PAST:
                 status.clear();
                 status.add(BookingStatus.APPROVED);
                 bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndEndDateBeforeOrderByStartDateAsc(userId, status, now);
+                        .findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(userId, status, now);
                 break;
             case FUTURE:
                 status.clear();
                 status.add(BookingStatus.APPROVED);
                 status.add(BookingStatus.WAITING);
                 bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndStartDateAfterOrderByStartDateAsc(userId, status, now);
+                        .findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(userId, status, now);
                 break;
             case WAITING:
                 status.clear();
                 status.add(BookingStatus.WAITING);
                 bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInOrderByStartDateAsc(userId, status);
+                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
                 break;
             case REJECTED:
                 status.clear();
                 status.add(BookingStatus.REJECTED);
                 bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInOrderByStartDateAsc(userId, status);
+                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
                 break;
             default:
-                bookings = bookingJpaRepository.findAllByBookerIdOrderByStartDateAsc(userId);
+                bookings = bookingJpaRepository.findAllByBookerIdOrderByStartDesc(userId);
                 break;
         }
         return bookings;
@@ -113,13 +135,52 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBookingByOwnerItems(Long userId, BookingFilter filter) {
+        //Ищем вещи владельца вещей
         List<Long> itemIds = itemJpaRepository.findAllByUserId(userId)
                 .stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
-        if (itemIds != null) {
+        List<Booking> bookings = new ArrayList<Booking>();
+        if (!itemIds.isEmpty()) {
             List<BookingStatus> status = new ArrayList<>();
-            return bookingJpaRepository.findAllByItemIdInAndStatusInOrderByStartDateAsc(itemIds,status);
+            LocalDateTime now = LocalDateTime.now();
+            switch (filter) {
+                case CURRENT:
+                    status.clear();
+                    status.add(BookingStatus.APPROVED);
+                    bookings = bookingJpaRepository
+                            .findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(itemIds, status, now, now);
+                    break;
+                case PAST:
+                    status.clear();
+                    status.add(BookingStatus.APPROVED);
+                    bookings = bookingJpaRepository
+                            .findAllByItemIdInAndStatusInAndEndBeforeOrderByStartDesc(itemIds, status, now);
+                    break;
+                case FUTURE:
+                    status.clear();
+                    status.add(BookingStatus.APPROVED);
+                    status.add(BookingStatus.WAITING);
+                    bookings = bookingJpaRepository
+                            .findAllByItemIdInAndStatusInAndStartAfterOrderByStartDesc(itemIds, status, now);
+                    break;
+                case WAITING:
+                    status.clear();
+                    status.add(BookingStatus.WAITING);
+                    bookings = bookingJpaRepository
+                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
+                    break;
+                case REJECTED:
+                    status.clear();
+                    status.add(BookingStatus.REJECTED);
+                    bookings = bookingJpaRepository
+                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
+                    break;
+                default:
+                    bookings = bookingJpaRepository.findAllByItemIdInOrderByStartDesc(itemIds);
+                    break;
+            }
+            return bookingJpaRepository.findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
         }
         throw new NotFoundException("No items found");
     }
