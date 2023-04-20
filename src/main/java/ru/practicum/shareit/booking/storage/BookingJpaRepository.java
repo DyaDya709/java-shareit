@@ -8,30 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
-    //ищем по bookerId и статусу, дате начала Before и дате конца After (CURRENT)
-    List<Booking> findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(Long bookerId,
-                                                                                        List<BookingStatus> status,
-                                                                                        LocalDateTime startDateTime,
-                                                                                        LocalDateTime endDateTime);
-
-    //ищем по bookerId и статусу и дате конца Before (PAST)
-    List<Booking> findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(Long bookerId,
-                                                                           List<BookingStatus> status,
-                                                                           LocalDateTime dateTime);
-
-    //ищем по bookerId и статусу и дате начала After (FUTURE)
-    List<Booking> findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(Long bookerId,
-                                                                            List<BookingStatus> status,
-                                                                            LocalDateTime dateTime);
-
-    //ищем по bookerId и статусу
-    List<Booking> findAllByBookerIdAndStatusInOrderByStartDesc(Long bookerId,
-                                                               List<BookingStatus> status);
-
-    //ищем по bookerId
-    List<Booking> findAllByBookerIdOrderByStartDesc(Long bookerId);
-
-
     //ищем по itemIds и статусу, дате начала Before и дате конца After (CURRENT)
     List<Booking> findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(List<Long> itemIds,
                                                                                         List<BookingStatus> status,

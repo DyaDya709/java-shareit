@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingJpaRepository;
 import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemJpaRepository;
@@ -43,6 +42,9 @@ public class BookingServiceImpl implements BookingService {
                 throw new BadRequestException("the item is unavailable");
             }
         }
+        if (item.getUserId().equals(user.getId())) {
+            throw new NotFoundException("user is the owner of the item");
+        }
         bookingDto.setBookerId(userId);
         Booking booking = bookingMapper.toEntity(bookingDto);
         if (booking.getEnd().isBefore(booking.getStart())) {
@@ -56,7 +58,6 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("the start date is before the end date");
         }
         booking.setStatus(BookingStatus.WAITING);
-        user.getBookings().add(booking);
         Booking bookingDB = bookingJpaRepository.save(booking);
         return bookingDB;
     }
@@ -66,11 +67,12 @@ public class BookingServiceImpl implements BookingService {
     public Booking confirmation(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingJpaRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
-        List<Item> userItems = itemJpaRepository.findAllByUserId(userId);
-        userItems.stream()
-                .filter(item -> item.getUserId().equals(userId))
-                .map(Item::getId)
-                .findFirst().orElseThrow(() -> new BadRequestException("the user is not the owner of the item"));
+        if (!booking.getItem().getUserId().equals(userId)) {
+            throw new NotFoundException("the user is not the owner of the item");
+        }
+        if (booking.getStatus().equals(BookingStatus.APPROVED)) {
+            throw new BadRequestException("the booking is already approved");
+        }
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return bookingJpaRepository.save(booking);
     }
@@ -84,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
             List<Item> userItems = itemJpaRepository.findAllByUserId(userId);
             userItems.stream()
                     .filter(item -> item.getUserId().equals(userId)).findFirst()
-                    .orElseThrow(() -> new ConflictException("the user is not the owner of the item"));
+                    .orElseThrow(() -> new NotFoundException("the user is not the owner of the item"));
         }
         return booking;
     }
@@ -97,10 +99,6 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime now = LocalDateTime.now();
         switch (filter) {
             case CURRENT:
-//                status.clear();
-//                status.add(BookingStatus.APPROVED);
-//                bookings = bookingJpaRepository
-//                        .findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(userId, status, now, now);
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
                         .filter(booking -> booking.getStart().isBefore(now))
@@ -109,10 +107,6 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
             case PAST:
-//                status.clear();
-//                status.add(BookingStatus.APPROVED);
-//                bookings = bookingJpaRepository
-//                        .findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(userId, status, now);
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
                         .filter(booking -> booking.getEnd().isAfter(now))
@@ -120,11 +114,6 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
             case FUTURE:
-//                status.clear();
-//                status.add(BookingStatus.APPROVED);
-//                status.add(BookingStatus.WAITING);
-//                bookings = bookingJpaRepository
-//                        .findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(userId, status, now);
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) ||
                                 booking.getStatus().equals(BookingStatus.WAITING))
@@ -133,27 +122,18 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
             case WAITING:
-//                status.clear();
-//                status.add(BookingStatus.WAITING);
-//                bookings = bookingJpaRepository
-//                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case REJECTED:
-//                status.clear();
-//                status.add(BookingStatus.REJECTED);
-//                bookings = bookingJpaRepository
-//                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             default:
-//                bookings = bookingJpaRepository.findAllByBookerIdOrderByStartDesc(userId);
                 bookings = user.getBookings().stream()
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
