@@ -34,9 +34,4 @@ public class User {
     @JsonBackReference
     private List<Booking> bookings;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Item> items;
 }

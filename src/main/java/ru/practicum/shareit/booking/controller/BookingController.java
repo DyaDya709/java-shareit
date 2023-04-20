@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingFilter;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.BadRequestException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,21 +35,33 @@ public class BookingController {
     public List<Booking> getAllBorrowerBookings(@RequestHeader(requestHeaderUserId) long userId,
                                                 @RequestParam(required = false,
                                                         defaultValue = "ALL",
-                                                        value = "state") BookingFilter filter) {
-        return bookingService.getAllBorrowerBookings(userId, filter);
+                                                        value = "state") String filter) {
+        BookingFilter bookingFilter;
+        try {
+            bookingFilter = BookingFilter.valueOf(filter.toUpperCase());
+        } catch (Exception e) {
+            throw new BadRequestException("Unknown state: " + filter.toUpperCase());
+        }
+        return bookingService.getAllBorrowerBookings(userId, bookingFilter);
     }
 
     @GetMapping("/owner")
     public List<Booking> getAllBookingByOwnerItems(@RequestHeader(requestHeaderUserId) long userId,
                                                    @RequestParam(required = false,
                                                            defaultValue = "ALL",
-                                                           value = "state") BookingFilter filter) {
-        return bookingService.getAllBookingByOwnerItems(userId, filter);
+                                                           value = "state") String filter) {
+        BookingFilter bookingFilter;
+        try {
+            bookingFilter = BookingFilter.valueOf(filter.toUpperCase());
+        } catch (Exception e) {
+            throw new BadRequestException("Unknown state: " + filter.toUpperCase());
+        }
+        return bookingService.getAllBookingByOwnerItems(userId, bookingFilter);
     }
 
     @GetMapping("/{bookingId}")
     public Booking getByBookingId(@RequestHeader(requestHeaderUserId) long userId,
-                                 @PathVariable("bookingId") long bookingId) {
+                                  @PathVariable("bookingId") long bookingId) {
         return bookingService.getByBookingId(userId, bookingId);
     }
 }

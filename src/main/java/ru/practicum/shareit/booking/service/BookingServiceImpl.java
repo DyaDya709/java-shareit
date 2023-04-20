@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,44 +91,72 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
-        userJpaRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found"));
+        User user = userJpaRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found"));
         List<Booking> bookings;
         List<BookingStatus> status = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         switch (filter) {
             case CURRENT:
-                status.clear();
-                status.add(BookingStatus.APPROVED);
-                bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(userId, status, now, now);
+//                status.clear();
+//                status.add(BookingStatus.APPROVED);
+//                bookings = bookingJpaRepository
+//                        .findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(userId, status, now, now);
+                bookings = user.getBookings().stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
+                        .filter(booking -> booking.getStart().isBefore(now))
+                        .filter(booking -> booking.getEnd().isAfter(now))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
             case PAST:
-                status.clear();
-                status.add(BookingStatus.APPROVED);
-                bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(userId, status, now);
+//                status.clear();
+//                status.add(BookingStatus.APPROVED);
+//                bookings = bookingJpaRepository
+//                        .findAllByBookerIdAndStatusInAndEndBeforeOrderByStartDesc(userId, status, now);
+                bookings = user.getBookings().stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
+                        .filter(booking -> booking.getEnd().isAfter(now))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
             case FUTURE:
-                status.clear();
-                status.add(BookingStatus.APPROVED);
-                status.add(BookingStatus.WAITING);
-                bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(userId, status, now);
+//                status.clear();
+//                status.add(BookingStatus.APPROVED);
+//                status.add(BookingStatus.WAITING);
+//                bookings = bookingJpaRepository
+//                        .findAllByBookerIdAndStatusInAndStartAfterOrderByStartDesc(userId, status, now);
+                bookings = user.getBookings().stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) ||
+                                booking.getStatus().equals(BookingStatus.WAITING))
+                        .filter(booking -> booking.getStart().isAfter(now))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
             case WAITING:
-                status.clear();
-                status.add(BookingStatus.WAITING);
-                bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
+//                status.clear();
+//                status.add(BookingStatus.WAITING);
+//                bookings = bookingJpaRepository
+//                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
+                bookings = user.getBookings().stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
             case REJECTED:
-                status.clear();
-                status.add(BookingStatus.REJECTED);
-                bookings = bookingJpaRepository
-                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
+//                status.clear();
+//                status.add(BookingStatus.REJECTED);
+//                bookings = bookingJpaRepository
+//                        .findAllByBookerIdAndStatusInOrderByStartDesc(userId, status);
+                bookings = user.getBookings().stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
             default:
-                bookings = bookingJpaRepository.findAllByBookerIdOrderByStartDesc(userId);
+//                bookings = bookingJpaRepository.findAllByBookerIdOrderByStartDesc(userId);
+                bookings = user.getBookings().stream()
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .collect(Collectors.toList());
                 break;
         }
         return bookings;
@@ -180,7 +209,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingJpaRepository.findAllByItemIdInOrderByStartDesc(itemIds);
                     break;
             }
-            return bookingJpaRepository.findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
+            return bookings;
         }
         throw new NotFoundException("No items found");
     }
