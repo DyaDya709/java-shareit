@@ -3,8 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingJpaRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -12,15 +10,13 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemJpaRepository;
-import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserJpaRepository;
-import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,24 +78,44 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item get(Long itemId) {
+    public Item get(Long itemId, Long userId) {
         Item item = itemJpaRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("item with id %s not found", itemId)));
-        item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId()))
-                .stream().findFirst().orElse(null));
-        item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId()))
-                .stream().findFirst().orElse(null));
+        if (item.getUserId().equals(userId)) {
+            LocalDateTime now = LocalDateTime.now();
+            item.setNextBooking(bookingJpaRepository.
+                    findNextBookingByItemIds(Collections.singletonList(item.getId()), now)
+                    .stream()
+                    .findFirst()
+                    .orElse(null));
+            item.setLastBooking(bookingJpaRepository.
+                    findLastBookingByItemIds(Collections.singletonList(item.getId()), now)
+                    .stream()
+                    .findFirst()
+                    .orElse(null));
+        }
+
         return item;
     }
 
     @Override
     public List<Item> getAll(Long userId) {
         List<Item> items = itemJpaRepository.findAllByUserId(userId);
+        LocalDateTime now = LocalDateTime.now();
         for (Item item : items) {
-            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId()))
-                    .stream().findFirst().orElse(null));
-            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId()))
-                    .stream().findFirst().orElse(null));
+            if (!item.getUserId().equals(userId)) {
+                continue;
+            }
+            item.setNextBooking(bookingJpaRepository
+                    .findNextBookingByItemIds(Collections.singletonList(item.getId()), now)
+                    .stream()
+                    .findFirst()
+                    .orElse(null));
+            item.setLastBooking(bookingJpaRepository
+                    .findLastBookingByItemIds(Collections.singletonList(item.getId()), now)
+                    .stream()
+                    .findFirst()
+                    .orElse(null));
         }
         return items;
     }

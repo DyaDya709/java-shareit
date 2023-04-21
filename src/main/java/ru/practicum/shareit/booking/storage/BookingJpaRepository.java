@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
-import ru.practicum.shareit.booking.dto.BookingShortDtoImpl;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
@@ -41,17 +40,17 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
             "FROM Booking b " +
             "WHERE b.item.id IN :itemIds " +
-            "AND b.start > CURRENT_TIMESTAMP " +
+            "AND b.start > :now " +
             "AND b.status = 'APPROVED' " +
             "ORDER BY b.start ASC")
-    List<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") List<Long> itemIds);
+    List<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") List<Long> itemIds, LocalDateTime now);
 
     @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
             "FROM Booking b " +
             "WHERE b.item.id IN :itemIds " +
-            "AND b.start < CURRENT_TIMESTAMP " +
+            "AND b.start < :now " +
             "AND b.status = 'APPROVED' " +
             "ORDER BY b.start DESC ")
-    List<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") List<Long> itemIds);
+    List<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") List<Long> itemIds, LocalDateTime now);
 }
 
