@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
-        User user = userJpaRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found"));
+        User user = userJpaRepository.findByIdWithBookings(userId).orElseThrow(() -> new NotFoundException("user not found"));
         List<Booking> bookings;
         List<BookingStatus> status = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();

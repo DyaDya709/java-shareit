@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
+
     //ищем по itemIds и статусу, дате начала Before и дате конца After (CURRENT)
     List<Booking> findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(List<Long> itemIds,
                                                                                         List<BookingStatus> status,
