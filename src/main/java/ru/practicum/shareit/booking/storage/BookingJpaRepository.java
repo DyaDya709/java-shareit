@@ -41,45 +41,17 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
             "FROM Booking b " +
             "WHERE b.item.id IN :itemIds " +
-            "AND b.start < CURRENT_TIMESTAMP " +
+            "AND b.start > CURRENT_TIMESTAMP " +
             "AND b.status = 'APPROVED' " +
-            "ORDER BY b.start DESC")
-    List<BookingShortDto> findFirstBookingBeforeNowByItemIds(@Param("itemIds") List<Long> itemIds);
+            "ORDER BY b.start ASC")
+    List<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") List<Long> itemIds);
 
     @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
             "FROM Booking b " +
             "WHERE b.item.id IN :itemIds " +
-            "AND b.end > CURRENT_TIMESTAMP " +
+            "AND b.start < CURRENT_TIMESTAMP " +
             "AND b.status = 'APPROVED' " +
-            "ORDER BY b.end ASC")
-    List<BookingShortDto> findFirstBookingAfterNowByItemIds(@Param("itemIds") List<Long> itemIds);
-
-    @Query(value = "WITH bookings_table AS " +
-            "(SELECT MAX(end_date) AS max_end " +
-            "FROM bookings " +
-            "WHERE end_date < CURRENT_TIMESTAMP " +
-            "AND bookings.item_id IN (:itemIds) " +
-            "AND status = 'APPROVED') " +
-            "SELECT b.id AS id, b.item_id AS bookerId " +
-            "FROM bookings b " +
-            "JOIN bookings_table bt ON b.start_date = bt.max_end " +
-            "WHERE b.item_id IN (:itemIds) " +
-            "AND b.status = 'APPROVED' " +
-            "LIMIT 1", nativeQuery = true)
-    BookingShortDtoImpl findLastBookingByItemIds(@Param("itemIds") List<Long> itemIds);
-
-    @Query(value = "WITH bookings_table AS " +
-            "(SELECT MIN(start_date) AS min_start " +
-            "FROM bookings " +
-            "WHERE start_date > CURRENT_TIMESTAMP " +
-            "AND bookings.item_id IN (:itemIds) " +
-            "AND status = 'APPROVED') " +
-            "SELECT b.item_id AS id, b.item_id AS bookerId " +
-            "FROM bookings b " +
-            "JOIN bookings_table bt ON b.start_date = bt.min_start " +
-            "WHERE b.id IN (:itemIds) " +
-            "AND b.status = 'APPROVED' " +
-            "LIMIT 1", nativeQuery = true)
-    BookingShortDtoImpl findNextBookingByItemIds(@Param("itemIds") List<Long> itemIds);
+            "ORDER BY b.start DESC ")
+    List<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") List<Long> itemIds);
 }
 

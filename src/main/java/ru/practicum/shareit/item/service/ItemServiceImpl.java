@@ -85,8 +85,10 @@ public class ItemServiceImpl implements ItemService {
     public Item get(Long itemId) {
         Item item = itemJpaRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("item with id %s not found", itemId)));
-        item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId())));
-        item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId())));
+        item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId()))
+                .stream().findFirst().orElse(null));
+        item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId()))
+                .stream().findFirst().orElse(null));
         return item;
     }
 
@@ -94,8 +96,10 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> getAll(Long userId) {
         List<Item> items = itemJpaRepository.findAllByUserId(userId);
         for (Item item : items) {
-            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId())));
-            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId())));
+            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(Collections.singletonList(item.getId()))
+                    .stream().findFirst().orElse(null));
+            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(Collections.singletonList(item.getId()))
+                    .stream().findFirst().orElse(null));
         }
         return items;
     }
