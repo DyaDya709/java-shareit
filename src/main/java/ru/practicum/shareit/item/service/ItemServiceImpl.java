@@ -83,16 +83,8 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException(String.format("item with id %s not found", itemId)));
         if (item.getUserId().equals(userId)) {
             LocalDateTime now = LocalDateTime.now();
-            item.setNextBooking(bookingJpaRepository.
-                    findNextBookingByItemIds(Collections.singletonList(item.getId()), now)
-                    .stream()
-                    .findFirst()
-                    .orElse(null));
-            item.setLastBooking(bookingJpaRepository.
-                    findLastBookingByItemIds(Collections.singletonList(item.getId()), now)
-                    .stream()
-                    .findFirst()
-                    .orElse(null));
+            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(item.getId(), now).orElse(null));
+            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(item.getId(), now).orElse(null));
         }
 
         return item;
@@ -106,16 +98,8 @@ public class ItemServiceImpl implements ItemService {
             if (!item.getUserId().equals(userId)) {
                 continue;
             }
-            item.setNextBooking(bookingJpaRepository
-                    .findNextBookingByItemIds(Collections.singletonList(item.getId()), now)
-                    .stream()
-                    .findFirst()
-                    .orElse(null));
-            item.setLastBooking(bookingJpaRepository
-                    .findLastBookingByItemIds(Collections.singletonList(item.getId()), now)
-                    .stream()
-                    .findFirst()
-                    .orElse(null));
+            item.setNextBooking(bookingJpaRepository.findNextBookingByItemIds(item.getId(), now).orElse(null));
+            item.setLastBooking(bookingJpaRepository.findLastBookingByItemIds(item.getId(), now).orElse(null));
         }
         return items;
     }

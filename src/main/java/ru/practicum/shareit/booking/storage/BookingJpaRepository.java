@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
 
@@ -38,20 +39,33 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByItemIdsAndStatusWithItems(@Param("itemIds") List<Long> itemIds,
                                                   @Param("status") BookingStatus status);
 
-    @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
-            "FROM Booking b " +
-            "WHERE b.item.id IN :itemIds " +
-            "AND b.start > :now " +
-            "AND b.status = 'APPROVED' " +
-            "ORDER BY b.start ASC")
-    List<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") List<Long> itemIds, LocalDateTime now);
+    @Query(value =
+            "SELECT b.id AS id, b.user_id AS bookerId " +
+                    "FROM bookings b " +
+                    "WHERE b.item_id = (:itemIds) " +
+                    "AND b.start_date IN (SELECT MAX(start_date) AS max_start " +
+                    "            FROM bookings " +
+                    "            WHERE bookings.start_date < :localDateTime " +
+                    "            AND bookings.item_id = (:itemIds) " +
+                    "            AND status = 'APPROVED') " +
+                    "AND b.status = 'APPROVED' " +
+                    "LIMIT 1", nativeQuery = true)
+    Optional<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") Long itemIds,
+                                                        @Param("localDateTime") LocalDateTime localDateTime);
 
-    @Query("SELECT NEW ru.practicum.shareit.booking.dto.BookingShortDtoImpl(b.id, b.booker.id) " +
-            "FROM Booking b " +
-            "WHERE b.item.id IN :itemIds " +
-            "AND b.start < :now " +
+    @Query(value = "WITH bookings_table AS " +
+            "(SELECT MIN(start_date) AS min_start " +
+            "FROM bookings " +
+            "WHERE start_date > :localDateTime " +
+            "AND bookings.item_id = (:itemIds) " +
+            "AND status = 'APPROVED') " +
+            "SELECT b.id AS id, b.user_id AS bookerId " +
+            "FROM bookings b " +
+            "JOIN bookings_table bt ON b.start_date = bt.min_start " +
+            "WHERE b.item_id = (:itemIds) " +
             "AND b.status = 'APPROVED' " +
-            "ORDER BY b.start DESC ")
-    List<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") List<Long> itemIds, LocalDateTime now);
+            "LIMIT 1", nativeQuery = true)
+    Optional<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") Long itemIds,
+                                                        @Param("localDateTime") LocalDateTime localDateTime);
 }
 
