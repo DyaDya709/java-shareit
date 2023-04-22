@@ -12,8 +12,7 @@ create table if not exists users
     name  varchar(100)
 );
 
-alter table users
-    owner to kitty;
+
 
 create table if not exists items
 (
@@ -27,8 +26,7 @@ create table if not exists items
     available   boolean default true
 );
 
-alter table items
-    owner to kitty;
+
 
 create  index if not exists items_user_id_index
     on items (user_id);
@@ -54,8 +52,6 @@ create table if not exists bookings
     status     varchar(20)
 );
 
-alter table bookings
-    owner to kitty;
 
 create index if not exists bookings_user_id_index
     on bookings (user_id);
@@ -86,8 +82,6 @@ create table if not exists comments
     created timestamp
 );
 
-alter table comments
-    owner to kitty;
 
 
 delete from bookings;
