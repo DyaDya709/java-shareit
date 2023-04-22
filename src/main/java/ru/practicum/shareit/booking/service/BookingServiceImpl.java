@@ -92,9 +92,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
-        User user = userJpaRepository.findByIdWithBookings(userId).orElseThrow(() -> new NotFoundException("user not found"));
+        User user = userJpaRepository.findByIdWithBookings(userId)
+                .orElseThrow(() -> new NotFoundException("user not found"));
         List<Booking> bookings;
-        List<BookingStatus> status = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         switch (filter) {
             case CURRENT:
@@ -106,7 +106,6 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case PAST:
                 bookings = user.getBookings().stream()
-                        //.filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
                         .filter(booking -> booking.getEnd().isBefore(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
