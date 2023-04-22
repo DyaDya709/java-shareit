@@ -1,16 +1,15 @@
 package ru.practicum.shareit.booking.mapper;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-@Service
+@Component
 public class BookingMapper {
     private final UserService userService;
     private final ItemService itemService;
@@ -35,7 +34,7 @@ public class BookingMapper {
     public Booking toEntity(BookingDto object) {
         Booking booking = new Booking();
         booking.setId(object.getId());
-        booking.setItem(itemService.get(object.getItemId(),null));
+        booking.setItem(itemService.get(object.getItemId(), null));
         booking.setBooker(userService.getUser(object.getBookerId()));
         booking.setStart(stringToLocalDateTime(object.getStart()));
         booking.setEnd(stringToLocalDateTime(object.getEnd()));
@@ -45,13 +44,13 @@ public class BookingMapper {
 
     public LocalDateTime stringToLocalDateTime(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT);
-                //.withZone(ZoneId.systemDefault());
+        //.withZone(ZoneId.systemDefault());
         return LocalDateTime.parse(date, formatter);
     }
 
     public String localDateTimeToString(LocalDateTime date) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT);
-                //.withZone(ZoneId.systemDefault());
+        //.withZone(ZoneId.systemDefault());
         return date.format(dateTimeFormatter);
     }
 }

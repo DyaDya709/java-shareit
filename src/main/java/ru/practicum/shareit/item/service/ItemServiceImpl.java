@@ -15,12 +15,10 @@ import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final UserJpaRepository userJpaRepository;
     private final ItemJpaRepository itemJpaRepository;

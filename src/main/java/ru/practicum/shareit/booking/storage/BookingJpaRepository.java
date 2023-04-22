@@ -51,7 +51,7 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
                     "AND b.status = 'APPROVED' " +
                     "LIMIT 1", nativeQuery = true)
     Optional<BookingShortDto> findLastBookingByItemIds(@Param("itemIds") Long itemIds,
-                                                        @Param("localDateTime") LocalDateTime localDateTime);
+                                                       @Param("localDateTime") LocalDateTime localDateTime);
 
     @Query(value = "WITH bookings_table AS " +
             "(SELECT MIN(start_date) AS min_start " +
@@ -66,6 +66,6 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
             "AND b.status = 'APPROVED' " +
             "LIMIT 1", nativeQuery = true)
     Optional<BookingShortDto> findNextBookingByItemIds(@Param("itemIds") Long itemIds,
-                                                        @Param("localDateTime") LocalDateTime localDateTime);
+                                                       @Param("localDateTime") LocalDateTime localDateTime);
 }
 

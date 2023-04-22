@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingJpaRepository bookingJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
@@ -100,10 +99,10 @@ public class BookingServiceImpl implements BookingService {
         switch (filter) {
             case CURRENT:
                 bookings = user.getBookings().stream()
-                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
+                        //.filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
                         .filter(booking -> booking.getStart().isBefore(now))
                         .filter(booking -> booking.getEnd().isAfter(now))
-                        .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .sorted(Comparator.comparing(Booking::getStart))
                         .collect(Collectors.toList());
                 break;
             case PAST:
@@ -116,7 +115,7 @@ public class BookingServiceImpl implements BookingService {
             case FUTURE:
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) ||
-                                booking.getStatus().equals(BookingStatus.WAITING))
+                               booking.getStatus().equals(BookingStatus.WAITING))
                         .filter(booking -> booking.getStart().isAfter(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());

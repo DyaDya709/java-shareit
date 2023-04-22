@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface UserJpaRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
+
     @Query("SELECT u FROM User u JOIN FETCH u.bookings b WHERE u.id = :userId")
     Optional<User> findByIdWithBookings(@Param("userId") Long userId);
 }

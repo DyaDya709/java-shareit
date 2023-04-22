@@ -93,6 +93,9 @@ public class ApplicationExceptionsHandler {
                     httpCode = 400;
                 }
                 break;
+            case "commentDto":
+                httpCode = 400;
+                break;
         }
         return new ResponseEntity<>(errorMap, HttpStatus.resolve(httpCode));
     }
