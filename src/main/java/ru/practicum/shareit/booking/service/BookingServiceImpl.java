@@ -99,7 +99,6 @@ public class BookingServiceImpl implements BookingService {
         switch (filter) {
             case CURRENT:
                 bookings = user.getBookings().stream()
-                        //.filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
                         .filter(booking -> booking.getStart().isBefore(now))
                         .filter(booking -> booking.getEnd().isAfter(now))
                         .sorted(Comparator.comparing(Booking::getStart))
@@ -107,15 +106,15 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case PAST:
                 bookings = user.getBookings().stream()
-                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
-                        .filter(booking -> booking.getEnd().isAfter(now))
+                        //.filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED))
+                        .filter(booking -> booking.getEnd().isBefore(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case FUTURE:
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) ||
-                               booking.getStatus().equals(BookingStatus.WAITING))
+                                booking.getStatus().equals(BookingStatus.WAITING))
                         .filter(booking -> booking.getStart().isAfter(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
@@ -156,6 +155,9 @@ public class BookingServiceImpl implements BookingService {
                 case CURRENT:
                     status.clear();
                     status.add(BookingStatus.APPROVED);
+                    status.add(BookingStatus.WAITING);
+                    status.add(BookingStatus.REJECTED);
+                    status.add(BookingStatus.CANCELLED);
                     bookings = bookingJpaRepository
                             .findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(itemIds, status, now, now);
                     break;
