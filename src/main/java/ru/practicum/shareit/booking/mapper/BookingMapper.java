@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class BookingMapper {
     private final UserService userService;
     private final ItemService itemService;
-    private String PATTERN_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private String patternFormat = "yyyy-MM-dd'T'HH:mm:ss";
 
     public BookingMapper(UserService userService, ItemService itemService) {
         this.userService = userService;
@@ -43,13 +43,13 @@ public class BookingMapper {
     }
 
     public LocalDateTime stringToLocalDateTime(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternFormat);
         //.withZone(ZoneId.systemDefault());
         return LocalDateTime.parse(date, formatter);
     }
 
     public String localDateTimeToString(LocalDateTime date) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(patternFormat);
         //.withZone(ZoneId.systemDefault());
         return date.format(dateTimeFormatter);
     }
