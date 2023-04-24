@@ -1,6 +1,7 @@
 package ru.practicum.shareit.advice;
 
-import org.springframework.dao.*;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,28 +24,6 @@ public class ApplicationExceptionsHandler {
         if (ex instanceof DataIntegrityViolationException) {
             // обработка исключения, если было нарушение целостности данных
             statusCode = 409;
-        } else if (ex instanceof DataAccessResourceFailureException) {
-            // обработка исключения, если не удалось получить доступ к ресурсу
-        } else if (ex instanceof DeadlockLoserDataAccessException) {
-            // обработка исключения, если была обнаружена блокировка
-        } else if (ex instanceof EmptyResultDataAccessException) {
-            // обработка исключения, если не были получены данные из базы
-        } else if (ex instanceof IncorrectResultSizeDataAccessException) {
-            // обработка исключения, если результат запроса имеет неверный размер
-        } else if (ex instanceof InvalidDataAccessApiUsageException) {
-            // обработка исключения, если была передана неверная аргументация в методы доступа к данным
-        } else if (ex instanceof OptimisticLockingFailureException) {
-            // обработка исключения, если была обнаружена оптимистическая блокировка
-        } else if (ex instanceof PermissionDeniedDataAccessException) {
-            // обработка исключения, если был отказан в доступе к данным
-        } else if (ex instanceof QueryTimeoutException) {
-            // обработка исключения, если запрос не был выполнен за отведенное время
-        } else if (ex instanceof TransientDataAccessResourceException) {
-            // обработка исключения, если возникли временные проблемы при доступе к ресурсу
-        } else if (ex instanceof TypeMismatchDataAccessException) {
-            // обработка исключения, если типы данных не совпадают
-        } else {
-            // обработка других исключений доступа к данным
         }
         return new ResponseEntity<>(errorMap, HttpStatus.valueOf(statusCode));
     }

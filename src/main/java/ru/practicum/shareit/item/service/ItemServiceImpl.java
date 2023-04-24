@@ -23,7 +23,6 @@ public class ItemServiceImpl implements ItemService {
     private final UserJpaRepository userJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
     private final BookingJpaRepository bookingJpaRepository;
-    private final ItemMapper itemMapper;
 
     @Override
     @Transactional
@@ -35,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
-        Item item = itemMapper.toEntity(itemDto);
+        Item item = ItemMapper.toEntity(itemDto);
         item.setUserId(userId);
         return itemJpaRepository.save(item);
     }

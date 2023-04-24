@@ -15,12 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserJpaRepository userJpaRepository;
-    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public User create(UserDto userDto) {
-        User user = userMapper.toEntity(userDto);
+        User user = UserMapper.toEntity(userDto);
         return userJpaRepository.save(user);
     }
 

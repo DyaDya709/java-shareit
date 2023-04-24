@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
     private final CommentJpaRepository commentJpaRepository;
     private final UserJpaRepository userJpaRepository;
-    private final CommentMapper commentMapper;
 
     @Override
     @Transactional
@@ -40,6 +39,6 @@ public class CommentServiceImpl implements CommentService {
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException("item not found"));
 
-        return commentJpaRepository.save(commentMapper.toEntity(commentDto, user, item));
+        return commentJpaRepository.save(CommentMapper.toEntity(commentDto, user, item));
     }
 }

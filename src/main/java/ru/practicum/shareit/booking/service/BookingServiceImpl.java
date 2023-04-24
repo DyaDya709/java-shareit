@@ -27,7 +27,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingJpaRepository bookingJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
     private final UserJpaRepository userJpaRepository;
-    private final BookingMapper bookingMapper;
 
     @Override
     @Transactional
@@ -45,7 +44,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("user is the owner of the item");
         }
         bookingDto.setBookerId(userId);
-        Booking booking = bookingMapper.toEntity(bookingDto);
+        Booking booking = BookingMapper.toEntity(bookingDto, user, item);
         if (booking.getEnd().isBefore(booking.getStart())) {
             throw new BadRequestException("the end date is before the start date");
         }
@@ -146,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
                 .stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
-        List<Booking> bookings = new ArrayList<Booking>();
+        List<Booking> bookings;
         if (!itemIds.isEmpty()) {
             List<BookingStatus> status = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now();
