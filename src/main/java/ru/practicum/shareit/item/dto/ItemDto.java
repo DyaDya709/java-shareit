@@ -6,12 +6,11 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 public class ItemDto {
+    private Long id;
+    private Long userId;
     @NotEmpty
     private String name;
     @NotEmpty
