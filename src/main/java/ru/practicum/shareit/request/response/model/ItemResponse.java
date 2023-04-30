@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request.response.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,12 +19,12 @@ public class ItemResponse {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", updatable = false, insertable = false)
     @ToString.Exclude
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "request_id")
+    @JoinColumn(name = "request_id", updatable = false, insertable = false)
     @ToString.Exclude
     private ItemRequest itemRequest;
 

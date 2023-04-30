@@ -6,6 +6,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.response.mapper.ItemResponseMapper;
 
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,7 +24,11 @@ public class ItemRequestMapper {
     }
 
     public static ItemRequest toEntity(ItemRequestDto requestDto) {
-        return null;
+        ItemRequest request = new ItemRequest();
+        request.setUserId(requestDto.getUserId());
+        request.setDescription(requestDto.getDescription());
+        request.setCreated(Instant.now());
+        return request;
     }
 
 }

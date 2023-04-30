@@ -104,16 +104,17 @@ create table if not exists item_responses
 );
 
 
-delete from bookings;
-delete from comments;
-delete from items;
-DELETE FROM users;
-delete from item_requests;
-delete from item_responses;
+truncate table bookings restart identity cascade;
 
-ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE comments ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE items ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE users ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE item_requests ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE item_responses ALTER COLUMN id RESTART WITH 1;
+truncate table comments restart identity cascade;
+
+truncate table item_responses restart identity cascade;
+
+truncate table items restart identity cascade;
+
+truncate table item_requests restart identity cascade;
+
+truncate table users restart identity cascade;
+
+
+

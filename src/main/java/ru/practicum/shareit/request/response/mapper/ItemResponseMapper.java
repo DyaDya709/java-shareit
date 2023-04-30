@@ -9,7 +9,9 @@ import ru.practicum.shareit.request.response.model.ItemResponseDto;
 public final class ItemResponseMapper {
 
     public static ItemResponse toEntity(ItemResponseDto itemResponseDto) {
-        return null;
+        ItemResponse response = new ItemResponse();
+        response.setId(itemResponseDto.getId());
+        return response;
     }
 
     public static ItemResponseDto toDto(ItemResponse itemResponse) {
