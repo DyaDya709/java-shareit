@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -89,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getAll(Long userId) {
-        List<Item> items = itemJpaRepository.findAllByUserId(userId);
+        List<Item> items = itemJpaRepository.findByUserIdOrderById(userId);
         LocalDateTime now = LocalDateTime.now();
         for (Item item : items) {
             if (!item.getUserId().equals(userId)) {
