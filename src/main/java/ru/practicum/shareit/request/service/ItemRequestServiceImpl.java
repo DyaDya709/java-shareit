@@ -42,13 +42,17 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getOtherRequests(Long userId, Pageable page) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
         return requestJpaRepository.findByUserIdIsNot(userId, page).stream()
                 .map(ItemRequestMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ItemRequestDto getRequestById(Long requestId) {
+    public ItemRequestDto getRequestById(Long userId, Long requestId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
         return requestJpaRepository.findById(requestId).map(ItemRequestMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("request id not found"));
     }

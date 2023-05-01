@@ -15,6 +15,8 @@ public final class ItemResponseMapper {
         dto.setItemId(itemResponse.getItem().getId());
         dto.setUserId(itemResponse.getItem().getUserId());
         dto.setRequestId(itemResponse.getItemRequest().getId());
+        dto.setAvailable(itemResponse.getItem().getAvailable());
+        dto.setDescription(itemResponse.getItem().getDescription());
         return dto;
     }
 }

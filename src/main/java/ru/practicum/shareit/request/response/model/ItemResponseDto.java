@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.response.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +10,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemResponseDto {
+    @JsonIgnore
     private Long id;
 
+    @JsonProperty(value = "id")
     private Long itemId;
 
     @JsonProperty(value = "name")
     private String itemName;
+
+    private String description;
+
+    private Boolean available;
 
     private Long userId;
 

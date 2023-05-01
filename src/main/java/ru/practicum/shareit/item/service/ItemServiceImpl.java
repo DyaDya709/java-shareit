@@ -16,7 +16,6 @@ import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,6 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemJpaRepository itemJpaRepository;
     private final BookingJpaRepository bookingJpaRepository;
     private final ItemResponseService itemResponseService;
+
     @Override
     @Transactional
     public Item create(Long userId, ItemDto itemDto) {
@@ -36,13 +36,26 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException(String.format("user with id %s not found", userId));
         }
-        Item item = ItemMapper.toEntity(itemDto);
-        item.setUserId(userId);
-        Item itemDb = itemJpaRepository.save(item);
+
+        Item item;
+        //Если есть requestId, значит это ответ на запрос вещи
         if (itemDto.getRequestId() != null) {
-            itemResponseService.create(itemDto.getRequestId(), itemDb);
+            //Проверим, есть такая вещь у пользователя
+            item = itemJpaRepository.findByUserIdAndNameContainingIgnoreCase(userId, itemDto.getName())
+                    .orElse(null);
+            //если это новая вещь, то создадим ее
+            if (item == null) {
+                item = ItemMapper.toEntity(itemDto);
+                item.setUserId(userId);
+                item = itemJpaRepository.save(item);
+            }
+            itemResponseService.create(itemDto.getRequestId(), item);
+            item.setRequestId(itemDto.getRequestId());
+        } else {
+            item = ItemMapper.toEntity(itemDto);
+            item.setUserId(userId);
         }
-        return itemDb;
+        return itemJpaRepository.save(item);
     }
 
     @Override
