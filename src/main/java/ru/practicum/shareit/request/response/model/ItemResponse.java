@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.response.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -19,12 +20,13 @@ public class ItemResponse {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "item_id", updatable = false, insertable = false)
+    @JoinColumn(name = "item_id")
     @ToString.Exclude
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "request_id", updatable = false, insertable = false)
+    @JoinColumn(name = "request_id")
+    @JsonBackReference
     @ToString.Exclude
     private ItemRequest itemRequest;
 

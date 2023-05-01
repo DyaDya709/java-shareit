@@ -17,9 +17,11 @@ public class ItemRequestMapper {
         dto.setUserId(request.getUserId());
         dto.setDescription(request.getDescription());
         dto.setCreated(request.getCreated());
-        dto.setItemResponseDtos(request.getResponses().stream()
-                .map((ItemResponseMapper::toDto))
-                .collect(Collectors.toSet()));
+        if (request.getResponses() != null) {
+            dto.setItemResponseDtos(request.getResponses().stream()
+                    .map((ItemResponseMapper::toDto))
+                    .collect(Collectors.toSet()));
+        }
         return dto;
     }
 

@@ -1,8 +1,13 @@
 package ru.practicum.shareit.request.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
-import ru.practicum.shareit.request.response.model.ItemResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.request.response.model.ItemResponseDto;
 
 import javax.validation.constraints.NotEmpty;
@@ -24,9 +29,9 @@ public class ItemRequestDto {
     @NotEmpty
     private String description;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Instant created;
-
+    @JsonProperty(value = "items")
     private Set<ItemResponseDto> itemResponseDtos;
 
 }

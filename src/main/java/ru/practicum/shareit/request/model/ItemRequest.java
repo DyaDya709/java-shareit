@@ -32,7 +32,7 @@ public class ItemRequest {
     @Column(name = "created")
     private Instant created;
 
-    @OneToMany(mappedBy = "itemRequest")
+    @OneToMany(mappedBy = "itemRequest", fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonManagedReference
     private Set<ItemResponse> responses;

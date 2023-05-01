@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemJpaRepository;
+import ru.practicum.shareit.request.response.service.ItemResponseService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserJpaRepository;
 
@@ -24,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserJpaRepository userJpaRepository;
     private final ItemJpaRepository itemJpaRepository;
     private final BookingJpaRepository bookingJpaRepository;
-
+    private final ItemResponseService itemResponseService;
     @Override
     @Transactional
     public Item create(Long userId, ItemDto itemDto) {
@@ -37,7 +38,11 @@ public class ItemServiceImpl implements ItemService {
         }
         Item item = ItemMapper.toEntity(itemDto);
         item.setUserId(userId);
-        return itemJpaRepository.save(item);
+        Item itemDb = itemJpaRepository.save(item);
+        if (itemDto.getRequestId() != null) {
+            itemResponseService.create(itemDto.getRequestId(), itemDb);
+        }
+        return itemDb;
     }
 
     @Override
