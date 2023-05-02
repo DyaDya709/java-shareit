@@ -8,6 +8,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.response.mapper.ItemResponseMapper;
 import ru.practicum.shareit.request.response.model.ItemResponse;
 import ru.practicum.shareit.request.response.model.ItemResponseDto;
+import ru.practicum.shareit.request.response.model.ItemResponseShotDto;
 import ru.practicum.shareit.request.response.storage.ItemResponseRepository;
 import ru.practicum.shareit.request.storage.ItemRequestJpaRepository;
 
@@ -28,7 +29,7 @@ public class ItemResponseServiceImpl implements ItemResponseService {
     }
 
     @Override
-    public ItemResponseDto getByRequestId(Long requestId) {
+    public ItemResponseShotDto getByRequestId(Long requestId) {
         return itemResponseRepository.findByRequestId(requestId)
                 .orElseThrow(() -> new NotFoundException("requestId not found"));
     }
