@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -90,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter) {
+    public List<Booking> getAllBorrowerBookings(Long userId, BookingFilter filter, Pageable page) {
         User user = userJpaRepository.findByIdWithBookings(userId)
                 .orElseThrow(() -> new NotFoundException("user not found"));
         List<Booking> bookings;
@@ -101,12 +102,16 @@ public class BookingServiceImpl implements BookingService {
                         .filter(booking -> booking.getStart().isBefore(now))
                         .filter(booking -> booking.getEnd().isAfter(now))
                         .sorted(Comparator.comparing(Booking::getStart))
+                        .skip(page.getPageNumber() * page.getPageSize())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
             case PAST:
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getEnd().isBefore(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .skip(page.getPageNumber() * page.getPageSize())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
             case FUTURE:
@@ -115,23 +120,33 @@ public class BookingServiceImpl implements BookingService {
                                 booking.getStatus().equals(BookingStatus.WAITING))
                         .filter(booking -> booking.getStart().isAfter(now))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .skip(page.getPageNumber() * page.getPageSize())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
             case WAITING:
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .skip(page.getPageNumber() * page.getPageSize())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
             case REJECTED:
                 bookings = user.getBookings().stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .skip(page.getPageNumber() * page.getPageSize())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
             default:
-                bookings = user.getBookings().stream()
+                List<Booking> bookingDb = user.getBookings();
+                int count = bookingDb.size();
+                bookings = bookingDb.stream()
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
+                        .skip(page.getOffset() > count ? count - 1 : page.getOffset())
+                        .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;
         }
@@ -139,7 +154,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookingByOwnerItems(Long userId, BookingFilter filter) {
+    public List<Booking> getAllBookingByOwnerItems(Long userId, BookingFilter filter, Pageable page) {
         //Ищем вещи владельца вещей
         List<Long> itemIds = itemJpaRepository.findAllByUserId(userId)
                 .stream()
@@ -157,35 +172,36 @@ public class BookingServiceImpl implements BookingService {
                     status.add(BookingStatus.REJECTED);
                     status.add(BookingStatus.CANCELLED);
                     bookings = bookingJpaRepository
-                            .findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(itemIds, status, now, now);
+                            .findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(itemIds, status, now, now,
+                                    page);
                     break;
                 case PAST:
                     status.clear();
                     status.add(BookingStatus.APPROVED);
                     bookings = bookingJpaRepository
-                            .findAllByItemIdInAndStatusInAndEndBeforeOrderByStartDesc(itemIds, status, now);
+                            .findAllByItemIdInAndStatusInAndEndBeforeOrderByStartDesc(itemIds, status, now, page);
                     break;
                 case FUTURE:
                     status.clear();
                     status.add(BookingStatus.APPROVED);
                     status.add(BookingStatus.WAITING);
                     bookings = bookingJpaRepository
-                            .findAllByItemIdInAndStatusInAndStartAfterOrderByStartDesc(itemIds, status, now);
+                            .findAllByItemIdInAndStatusInAndStartAfterOrderByStartDesc(itemIds, status, now, page);
                     break;
                 case WAITING:
                     status.clear();
                     status.add(BookingStatus.WAITING);
                     bookings = bookingJpaRepository
-                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
+                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status, page);
                     break;
                 case REJECTED:
                     status.clear();
                     status.add(BookingStatus.REJECTED);
                     bookings = bookingJpaRepository
-                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status);
+                            .findAllByItemIdInAndStatusInOrderByStartDesc(itemIds, status, page);
                     break;
                 default:
-                    bookings = bookingJpaRepository.findAllByItemIdInOrderByStartDesc(itemIds);
+                    bookings = bookingJpaRepository.findAllByItemIdInOrderByStartDesc(itemIds, page);
                     break;
             }
             return bookings;

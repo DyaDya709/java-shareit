@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.storage.BookingJpaRepository;
@@ -107,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getAll(Long userId) {
+    public List<Item> getAll(Long userId, Pageable page) {
         List<Item> items = itemJpaRepository.findByUserIdOrderById(userId);
         LocalDateTime now = LocalDateTime.now();
         for (Item item : items) {
@@ -128,7 +129,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> findAvailable(String text) {
+    public List<Item> findAvailable(String text, Pageable page) {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }

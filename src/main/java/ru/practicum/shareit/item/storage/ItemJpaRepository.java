@@ -8,8 +8,12 @@ import java.util.Optional;
 
 public interface ItemJpaRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByUserId(Long userId);
+
     List<Item> findByUserIdOrderById(Long userId);
+
     List<Item> findAllByNameIgnoreCaseContainingOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(String name, String description);
+
     Item findByIdIs(Long itemId);
+
     Optional<Item> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
 }

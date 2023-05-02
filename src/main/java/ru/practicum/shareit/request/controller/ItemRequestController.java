@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.user.storage.UserJpaRepository;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -22,6 +21,7 @@ import java.util.List;
 public class ItemRequestController {
     private final String requestHeaderUserId = "X-Sharer-User-Id";
     private final ItemRequestService itemRequestService;
+
     @PostMapping()
     public ItemRequestDto create(@RequestHeader(requestHeaderUserId) long userId,
                                  @Valid @RequestBody ItemRequestDto request) {
@@ -49,7 +49,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequestById(@RequestHeader(requestHeaderUserId) long userId,
-                                               @PathVariable Long requestId) {
-       return itemRequestService.getRequestById(userId, requestId);
+                                         @PathVariable Long requestId) {
+        return itemRequestService.getRequestById(userId, requestId);
     }
 }
