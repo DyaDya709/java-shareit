@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
                 int count = bookingDb.size();
                 bookings = bookingDb.stream()
                         .sorted(Comparator.comparing(Booking::getStart).reversed())
-                        .skip(page.getOffset() > count ? count - 1 : page.getOffset())
+                        .skip(page.getOffset())
                         .limit(page.getPageSize())
                         .collect(Collectors.toList());
                 break;

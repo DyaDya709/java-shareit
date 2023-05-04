@@ -69,12 +69,12 @@ public class ItemController {
     }
 
     private void validatePageParameters(Integer from, Integer size) {
-        if (from != null && from <= 0 || size != null && size <= 0) {
+        if (from != null && from < 0 || size != null && size <= 0) {
             throw new BadRequestException("Invalid page request");
         }
     }
 
     private Pageable getPage(Integer from, Integer size) {
-        return PageRequest.of(from == null ? 0 : from, size == null ? Integer.MAX_VALUE : size);
+        return PageRequest.of(from == null ? 0 : from / size, size == null ? Integer.MAX_VALUE : size);
     }
 }

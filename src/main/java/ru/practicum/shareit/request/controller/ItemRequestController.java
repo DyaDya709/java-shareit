@@ -40,10 +40,10 @@ public class ItemRequestController {
                                                  @RequestParam(required = false) Integer size) {
         if (from == null || size == null) {
             return Collections.emptyList();
-        } else if (from <= 0 && size <= 0) {
+        } else if (from < 0 || size <= 0) {
             throw new BadRequestException("Invalid page request");
         }
-        Pageable page = PageRequest.of(from, size);
+        Pageable page = PageRequest.of(from / size, size);
         return itemRequestService.getOtherRequests(userId, page);
     }
 
