@@ -35,16 +35,16 @@ public class UserController {
     }
 
     @PostMapping()
-    public User create(@Valid @RequestBody UserDto itemDto) {
-        return userService.create(itemDto);
+    public User create(@Valid @RequestBody UserDto userDto) {
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable("userId") Optional<Long> id, @RequestBody UserDto itemDto) {
+    public User update(@PathVariable("userId") Optional<Long> id, @RequestBody UserDto userDto) {
         if (!id.isPresent()) {
             throw new BadRequestException("id missing");
         }
-        return userService.update(id.get(), itemDto);
+        return userService.update(id.get(), userDto);
     }
 
     @DeleteMapping("/{userId}")
