@@ -365,5 +365,70 @@ class BookingControllerTest {
         assertEquals(objectMapper.writeValueAsString(bookingDtoList), result);
     }
 
+    @Test
+    @SneakyThrows
+    void getAllBookingByOwnerItemsFuture() {
+        final List<Booking> bookingDtoList = Arrays.asList(booking);
+        final Pageable pageableSize = PageRequest.of(0, 2);
+        when(bookingService.getAllBookingByOwnerItems(userId, BookingFilter.FUTURE, pageableSize))
+                .thenReturn(bookingDtoList);
+        String result = mockMvc.perform(get("/bookings/owner")
+                        .param("state", "FUTURE")
+                        .param("from", "0")
+                        .param("size", "2")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1))
+                .getAllBookingByOwnerItems(userId, BookingFilter.FUTURE, pageableSize);
+        assertEquals(objectMapper.writeValueAsString(bookingDtoList), result);
+    }
 
+    @Test
+    @SneakyThrows
+    void getAllBookingByOwnerItemsCurrent() {
+        final List<Booking> bookingDtoList = Arrays.asList(booking);
+        final Pageable pageableSize = PageRequest.of(0, 2);
+        when(bookingService.getAllBookingByOwnerItems(userId, BookingFilter.CURRENT, pageableSize))
+                .thenReturn(bookingDtoList);
+        String result = mockMvc.perform(get("/bookings/owner")
+                        .param("state", "CURRENT")
+                        .param("from", "0")
+                        .param("size", "2")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1))
+                .getAllBookingByOwnerItems(userId, BookingFilter.CURRENT, pageableSize);
+        assertEquals(objectMapper.writeValueAsString(bookingDtoList), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllBookingByOwnerItemsUnsupported() {
+        final Pageable pageableSize = PageRequest.of(0, 2);
+        mockMvc.perform(get("/bookings/owner")
+                        .param("state", "UNSUPPORTED_STATUS")
+                        .param("from", "0")
+                        .param("size", "2")
+                        .header("X-Sharer-User-Id", userId))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.error", is("Unknown state: UNSUPPORTED_STATUS")));
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllBookingByOwnerItemsWithInvalidUserId() {
+        final Pageable pageableSize = PageRequest.of(0, 2);
+        mockMvc.perform(get("/bookings/owner")
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "2"))
+                .andExpect(status().is4xxClientError());
+        verify(bookingService, never()).getAllBookingByOwnerItems(userId, BookingFilter.ALL, pageableSize);
+    }
 }

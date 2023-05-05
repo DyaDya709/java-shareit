@@ -28,11 +28,4 @@ public class ItemResponseDto implements ItemResponseShotDto {
     private Long userId;
 
     private Long requestId;
-
-    public ItemResponseDto(Long id, Long itemId, Long requestId) {
-        this.id = id;
-        this.itemId = itemId;
-        this.requestId = requestId;
-    }
-
 }
