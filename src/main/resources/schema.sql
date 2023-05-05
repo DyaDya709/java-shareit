@@ -104,17 +104,17 @@ create table if not exists item_responses
 );
 
 
-truncate table bookings restart identity cascade;
-
-truncate table comments restart identity cascade;
-
-truncate table item_responses restart identity cascade;
-
-truncate table items restart identity cascade;
-
-truncate table item_requests restart identity cascade;
-
-truncate table users restart identity cascade;
+-- truncate table bookings restart identity cascade;
+--
+-- truncate table comments restart identity cascade;
+--
+-- truncate table item_responses restart identity cascade;
+--
+-- truncate table items restart identity cascade;
+--
+-- truncate table item_requests restart identity cascade;
+--
+-- truncate table users restart identity cascade;
 
 
 
