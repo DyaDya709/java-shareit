@@ -26,7 +26,7 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final CommentService commentService;
-    private final String userIdRequestHeader = "X-Sharer-User-Id";
+    private static final String userIdRequestHeader = "X-Sharer-User-Id";
 
     @PostMapping
     public Item create(@RequestHeader(userIdRequestHeader) Long userId, @Valid @RequestBody ItemDto itemDto) {
@@ -77,6 +77,6 @@ public class ItemController {
     }
 
     private Pageable getPage(Integer from, Integer size) {
-        return PageRequest.of(from == null ? 0 : from / size, size == null ? Integer.MAX_VALUE : size);
+        return PageRequest.of(from == null && size == null ? 0 : from / size, size == null ? Integer.MAX_VALUE : size);
     }
 }

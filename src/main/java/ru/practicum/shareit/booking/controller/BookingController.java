@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingController {
-    private final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
     private final BookingService bookingService;
 
     @PostMapping
@@ -85,6 +85,6 @@ public class BookingController {
     }
 
     private Pageable getPage(Integer from, Integer size) {
-        return PageRequest.of(from == null ? 0 : from / size, size == null ? Integer.MAX_VALUE : size);
+        return PageRequest.of(from == null && size == null ? 0 : from / size, size == null ? Integer.MAX_VALUE : size);
     }
 }

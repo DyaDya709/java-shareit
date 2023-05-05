@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemRequestControllerTest {
-    private final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
     @MockBean
     private final ItemRequestService itemRequestService;
     @Autowired

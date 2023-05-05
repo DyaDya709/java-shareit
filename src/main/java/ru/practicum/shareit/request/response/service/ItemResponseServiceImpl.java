@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.response.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.request.storage.ItemRequestJpaRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemResponseServiceImpl implements ItemResponseService {
     private final ItemResponseRepository itemResponseRepository;
     private final ItemRequestJpaRepository itemRequestJpaRepository;

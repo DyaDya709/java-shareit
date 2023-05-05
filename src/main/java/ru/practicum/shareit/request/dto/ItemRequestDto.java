@@ -27,7 +27,6 @@ public class ItemRequestDto {
     @NotEmpty
     private String description;
 
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Instant created;
     @JsonProperty(value = "items")
     private Set<ItemResponseDto> itemResponseDtos;

@@ -12,7 +12,7 @@ public interface ItemResponseRepository extends JpaRepository<ItemResponse, Long
             "SELECT id AS id, " +
                     "item_id AS itemId, " +
                     "request_id AS requestId " +
-                    "From item_responses " +
+                    "FROM item_responses " +
                     "WHERE request_id =:requestId " +
                     "LIMIT 1", nativeQuery = true)
     Optional<ItemResponseShotDto> findByRequestId(Long requestId);

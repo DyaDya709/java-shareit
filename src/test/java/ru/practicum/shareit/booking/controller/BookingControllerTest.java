@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class BookingControllerTest {
-    private final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
     @MockBean
     private final BookingService bookingService;
     @Autowired
@@ -50,6 +50,7 @@ class BookingControllerTest {
     final Long userId = 1L;
     final Long bookingId = 1L;
     final Pageable pageable = PageRequest.of(0, 2);
+    final Pageable pageableDefault = PageRequest.of(0, Integer.MAX_VALUE);
 
     @BeforeEach
     private void init() {
@@ -219,7 +220,7 @@ class BookingControllerTest {
     @SneakyThrows
     void getByBookingIdWithInvalidBookingId() {
         mockMvc.perform(get("/bookings/{bookingId}", "e")
-                        .header("X-Sharer-User-Id", userId))
+                        .header(requestHeaderUserId, userId))
                 .andExpect(status().is4xxClientError());
         verify(bookingService, never()).getByBookingId(anyLong(), anyLong());
     }
@@ -244,6 +245,22 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    void getAllBorrowerBookingsNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.ALL, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "ALL")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.ALL, pageableDefault);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
     void getAllBorrowerBookingsPast() {
         final List<Booking> bookings = Arrays.asList(booking);
         when(bookingService.getAllBorrowerBookings(userId, BookingFilter.PAST, pageable)).thenReturn(bookings);
@@ -257,6 +274,22 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.PAST, pageable);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllBorrowerBookingsPastNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.PAST, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "PAST")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.PAST, pageableDefault);
         assertEquals(objectMapper.writeValueAsString(bookings), result);
     }
 
@@ -280,6 +313,22 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    void getAllBorrowerBookingsWaitingNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.WAITING, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "WAITING")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.WAITING, pageableDefault);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
     void getAllBorrowerBookingsCurrent() {
         final List<Booking> bookings = Arrays.asList(booking);
         when(bookingService.getAllBorrowerBookings(userId, BookingFilter.CURRENT, pageable)).thenReturn(bookings);
@@ -293,6 +342,22 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.CURRENT, pageable);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllBorrowerBookingsCurrentNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.CURRENT, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "CURRENT")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.CURRENT, pageableDefault);
         assertEquals(objectMapper.writeValueAsString(bookings), result);
     }
 
@@ -316,6 +381,23 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
+    void getAllBorrowerBookingsFutureNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.FUTURE, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "FUTURE")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.FUTURE,
+                pageableDefault);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
     void getAllBorrowerBookingsRejected() {
         final List<Booking> bookings = Arrays.asList(booking);
         when(bookingService.getAllBorrowerBookings(userId, BookingFilter.REJECTED, pageable)).thenReturn(bookings);
@@ -329,6 +411,23 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.REJECTED, pageable);
+        assertEquals(objectMapper.writeValueAsString(bookings), result);
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllBorrowerBookingsRejectedNullPageParam() {
+        final List<Booking> bookings = Arrays.asList(booking);
+        when(bookingService.getAllBorrowerBookings(userId, BookingFilter.REJECTED, pageableDefault)).thenReturn(bookings);
+        String result = mockMvc.perform(get("/bookings")
+                        .param("state", "REJECTED")
+                        .header(requestHeaderUserId, userId))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        verify(bookingService, times(1)).getAllBorrowerBookings(userId, BookingFilter.REJECTED,
+                pageableDefault);
         assertEquals(objectMapper.writeValueAsString(bookings), result);
     }
 

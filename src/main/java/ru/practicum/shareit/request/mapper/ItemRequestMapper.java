@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ItemRequestMapper {
+public final class ItemRequestMapper {
     public static ItemRequestDto toDto(ItemRequest request) {
         ItemRequestDto dto = new ItemRequestDto();
         dto.setId(request.getId());

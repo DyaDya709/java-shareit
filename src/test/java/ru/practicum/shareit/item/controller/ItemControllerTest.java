@@ -51,7 +51,7 @@ class ItemControllerTest {
     @MockBean
     private final UserService userService;
 
-    private final String userIdRequestHeader = "X-Sharer-User-Id";
+    private static final String userIdRequestHeader = "X-Sharer-User-Id";
 
     ItemDto itemDto;
     private Item item;

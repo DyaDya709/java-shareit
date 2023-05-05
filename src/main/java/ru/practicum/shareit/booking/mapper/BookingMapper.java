@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
@@ -8,12 +10,9 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BookingMapper {
     private static final String patternFormat = "yyyy-MM-dd'T'HH:mm:ss";
-
-    private BookingMapper() {
-    }
 
     public static BookingDto toDto(Booking object) {
         return BookingDto.builder()
