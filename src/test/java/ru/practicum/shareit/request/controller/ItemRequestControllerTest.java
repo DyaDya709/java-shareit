@@ -103,7 +103,7 @@ class ItemRequestControllerTest {
         mockMvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .header("X-Sharer-User-Id", 1))
+                        .header(requestHeaderUserId, 1))
                 .andExpect(status().is4xxClientError());
         verify(itemRequestService, never()).create(any());
     }
@@ -138,14 +138,10 @@ class ItemRequestControllerTest {
     void getOwnRequestsWithInvalidUserId() {
         final List<ItemRequestDto> requestDtoList = Arrays.asList(itemRequestDto);
         when(itemRequestService.getOwnRequests(userId)).thenReturn(requestDtoList);
-        String result = mockMvc.perform(get("/requests")
-                        .header(requestHeaderUserId, 1))
-                .andExpect(status().is2xxSuccessful())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-        verify(itemRequestService).getOwnRequests(any());
-        assertEquals(objectMapper.writeValueAsString(requestDtoList), result);
+        mockMvc.perform(get("/requests")
+                        .header(requestHeaderUserId, "o"))
+                .andExpect(status().is4xxClientError());
+        verify(itemRequestService, never()).getOwnRequests(any());
     }
 
     @Test
