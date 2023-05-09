@@ -73,6 +73,7 @@ public class ApplicationExceptionsHandler {
                 }
                 break;
             case "commentDto":
+            case "itemRequestDto":
                 httpCode = 400;
                 break;
         }

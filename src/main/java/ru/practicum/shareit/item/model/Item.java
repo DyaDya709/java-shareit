@@ -47,4 +47,7 @@ public class Item {
 
     @Transient
     BookingShortDto lastBooking;
+
+    @Transient
+    Long requestId;
 }

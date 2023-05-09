@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -35,16 +37,16 @@ public class UserController {
     }
 
     @PostMapping()
-    public User create(@Valid @RequestBody UserDto itemDto) {
-        return userService.create(itemDto);
+    public User create(@Valid @RequestBody UserDto userDto) {
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable("userId") Optional<Long> id, @RequestBody UserDto itemDto) {
+    public User update(@PathVariable("userId") Optional<Long> id, @RequestBody UserDto userDto) {
         if (!id.isPresent()) {
             throw new BadRequestException("id missing");
         }
-        return userService.update(id.get(), itemDto);
+        return userService.update(id.get(), userDto);
     }
 
     @DeleteMapping("/{userId}")

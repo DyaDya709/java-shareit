@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.storage;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,23 +18,26 @@ public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItemIdInAndStatusInAndStartBeforeAndEndAfterOrderByStartDesc(List<Long> itemIds,
                                                                                         List<BookingStatus> status,
                                                                                         LocalDateTime startDateTime,
-                                                                                        LocalDateTime endDateTime);
+                                                                                        LocalDateTime endDateTime,
+                                                                                        Pageable page);
 
     //ищем по itemIds и статусу и дате начала After (FUTURE)
     List<Booking> findAllByItemIdInAndStatusInAndStartAfterOrderByStartDesc(List<Long> itemIds,
                                                                             List<BookingStatus> status,
-                                                                            LocalDateTime startDateTime);
+                                                                            LocalDateTime startDateTime,
+                                                                            Pageable page);
 
     //ищем по itemIds и статусу и дате конца Before (PAST)
     List<Booking> findAllByItemIdInAndStatusInAndEndBeforeOrderByStartDesc(List<Long> itemIds,
                                                                            List<BookingStatus> status,
-                                                                           LocalDateTime endDateTime);
+                                                                           LocalDateTime endDateTime,
+                                                                           Pageable page);
 
     //ищем по itemId и статусу
-    List<Booking> findAllByItemIdInAndStatusInOrderByStartDesc(List<Long> itemIds, List<BookingStatus> status);
+    List<Booking> findAllByItemIdInAndStatusInOrderByStartDesc(List<Long> itemIds, List<BookingStatus> status, Pageable page);
 
     //ищем по itemId
-    List<Booking> findAllByItemIdInOrderByStartDesc(List<Long> itemIds);
+    List<Booking> findAllByItemIdInOrderByStartDesc(List<Long> itemIds, Pageable page);
 
     @Query("SELECT b FROM Booking b JOIN FETCH b.item i WHERE i.id IN :itemIds AND b.status = :status")
     List<Booking> findByItemIdsAndStatusWithItems(@Param("itemIds") List<Long> itemIds,
