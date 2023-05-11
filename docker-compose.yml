@@ -8,7 +8,7 @@ services:
       - "8080:8080"
     depends_on:
       - server
-      - db
+      - postgres
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
 #      - TZ=Europe/Moscow
@@ -19,13 +19,13 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - db
+      - postgres
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shareit
       - POSTGRES_USER=kitty
       - POSTGRES_PASSWORD=purrrrrr
 #      - TZ=Europe/Moscow
-  db:
+  postgres:
     image: postgres:15-alpine
     container_name: postgres-container
     ports:
