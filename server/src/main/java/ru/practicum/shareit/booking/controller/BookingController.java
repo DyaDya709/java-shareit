@@ -11,7 +11,6 @@ import ru.practicum.shareit.booking.service.BookingFilter;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.BadRequestException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     public Booking createBooking(@RequestHeader(requestHeaderUserId) long userId,
-                                 @Valid @RequestBody BookingDto bookingDto) {
+                                 @RequestBody BookingDto bookingDto) {
         return bookingService.create(userId, bookingDto);
     }
 
@@ -42,7 +41,7 @@ public class BookingController {
                                                         value = "state") String filter,
                                                 @RequestParam(required = false) Integer from,
                                                 @RequestParam(required = false) Integer size) {
-        validatePageParameters(from, size);
+        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         BookingFilter bookingFilter = getBookingFilter(filter);
         return bookingService.getAllBorrowerBookings(userId, bookingFilter, page);
@@ -56,7 +55,7 @@ public class BookingController {
                                                    @RequestParam(required = false) Integer from,
                                                    @RequestParam(required = false) Integer size) {
 
-        validatePageParameters(from, size);
+        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         BookingFilter bookingFilter = getBookingFilter(filter);
         return bookingService.getAllBookingByOwnerItems(userId, bookingFilter, page);

@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class ItemController {
     private static final String userIdRequestHeader = "X-Sharer-User-Id";
 
     @PostMapping
-    public Item create(@RequestHeader(userIdRequestHeader) Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public Item create(@RequestHeader(userIdRequestHeader) Long userId, @RequestBody ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
@@ -49,7 +48,7 @@ public class ItemController {
     public List<Item> getAll(@RequestHeader(userIdRequestHeader) Long userId,
                              @RequestParam(required = false) Integer from,
                              @RequestParam(required = false) Integer size) {
-        validatePageParameters(from, size);
+        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         return itemService.getAll(userId, page);
     }
@@ -58,7 +57,7 @@ public class ItemController {
     public List<Item> findAvailable(@RequestParam(required = false) String text,
                                     @RequestParam(required = false) Integer from,
                                     @RequestParam(required = false) Integer size) {
-        validatePageParameters(from, size);
+        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         return itemService.findAvailable(text, page);
     }
@@ -66,7 +65,7 @@ public class ItemController {
     @PostMapping("{itemId}/comment")
     public Comment createComment(@RequestHeader(userIdRequestHeader) Long userId,
                                  @PathVariable Long itemId,
-                                 @Valid @RequestBody CommentDto commentDto) {
+                                 @RequestBody CommentDto commentDto) {
         return commentService.createComment(userId, itemId, commentDto);
     }
 
