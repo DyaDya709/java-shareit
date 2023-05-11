@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.item.comment.service.CommentService;
@@ -25,30 +24,29 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final CommentService commentService;
-    private static final String userIdRequestHeader = "X-Sharer-User-Id";
+    private static final String USER_ID_REQUEST_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public Item create(@RequestHeader(userIdRequestHeader) Long userId, @RequestBody ItemDto itemDto) {
+    public Item create(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId, @RequestBody ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@RequestHeader(userIdRequestHeader) Long userId,
+    public Item update(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                        @PathVariable Long itemId,
                        @RequestBody ItemDto itemDto) {
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public Item get(@RequestHeader(userIdRequestHeader) Long userId, @PathVariable Long itemId) {
+    public Item get(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId, @PathVariable Long itemId) {
         return itemService.get(itemId, userId);
     }
 
     @GetMapping
-    public List<Item> getAll(@RequestHeader(userIdRequestHeader) Long userId,
+    public List<Item> getAll(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                              @RequestParam(required = false) Integer from,
                              @RequestParam(required = false) Integer size) {
-        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         return itemService.getAll(userId, page);
     }
@@ -57,22 +55,15 @@ public class ItemController {
     public List<Item> findAvailable(@RequestParam(required = false) String text,
                                     @RequestParam(required = false) Integer from,
                                     @RequestParam(required = false) Integer size) {
-        //validatePageParameters(from, size);
         Pageable page = getPage(from, size);
         return itemService.findAvailable(text, page);
     }
 
     @PostMapping("{itemId}/comment")
-    public Comment createComment(@RequestHeader(userIdRequestHeader) Long userId,
+    public Comment createComment(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                  @PathVariable Long itemId,
                                  @RequestBody CommentDto commentDto) {
         return commentService.createComment(userId, itemId, commentDto);
-    }
-
-    private void validatePageParameters(Integer from, Integer size) {
-        if (from != null && from < 0 || size != null && size <= 0) {
-            throw new BadRequestException("Invalid page request");
-        }
     }
 
     private Pageable getPage(Integer from, Integer size) {

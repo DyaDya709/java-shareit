@@ -16,24 +16,24 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingController {
-    private static final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER_ID = "X-Sharer-User-Id";
     private final BookingClient bookingClient;
 
     @PostMapping
-    public ResponseEntity<Object> createBooking(@RequestHeader(requestHeaderUserId) Long userId,
+    public ResponseEntity<Object> createBooking(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                                 @Valid @RequestBody BookingDto bookingDto) {
         return bookingClient.create(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> confirmation(@RequestHeader(requestHeaderUserId) Long userId,
+    public ResponseEntity<Object> confirmation(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                                @PathVariable("bookingId") Long bookingId,
                                                @RequestParam Boolean approved) {
         return bookingClient.confirmation(userId, bookingId, approved);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllBorrowerBookings(@RequestHeader(requestHeaderUserId) Long userId,
+    public ResponseEntity<Object> getAllBorrowerBookings(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                                          @RequestParam(required = false,
                                                                  defaultValue = "ALL",
                                                                  value = "state") String filter,
@@ -45,7 +45,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<Object> getAllBookingByOwnerItems(@RequestHeader(requestHeaderUserId) Long userId,
+    public ResponseEntity<Object> getAllBookingByOwnerItems(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                                             @RequestParam(required = false,
                                                                     defaultValue = "ALL",
                                                                     value = "state") String filter,
@@ -58,7 +58,7 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getByBookingId(@RequestHeader(requestHeaderUserId) Long userId,
+    public ResponseEntity<Object> getByBookingId(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                                  @PathVariable("bookingId") Long bookingId) {
         return bookingClient.getByBookingId(userId, bookingId);
     }

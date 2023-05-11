@@ -20,23 +20,23 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemRequestController {
-    private static final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER_ID = "X-Sharer-User-Id";
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping()
-    public ResponseEntity<Object> create(@RequestHeader(requestHeaderUserId) long userId,
+    public ResponseEntity<Object> create(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                          @Valid @RequestBody ItemRequestDto request) {
         request.setUserId(userId);
         return itemRequestClient.create(request, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getOwnRequests(@RequestHeader(requestHeaderUserId) long userId) {
+    public ResponseEntity<Object> getOwnRequests(@RequestHeader(REQUEST_HEADER_USER_ID) long userId) {
         return itemRequestClient.getOwnRequests(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getOtherRequests(@RequestHeader(requestHeaderUserId) long userId,
+    public ResponseEntity<Object> getOtherRequests(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                                    @RequestParam(required = false) Integer from,
                                                    @RequestParam(required = false) Integer size) {
         if (from == null || size == null) {
@@ -48,7 +48,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getRequestById(@RequestHeader(requestHeaderUserId) long userId,
+    public ResponseEntity<Object> getRequestById(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                                  @PathVariable Long requestId) {
         return itemRequestClient.getRequestById(requestId, userId);
     }

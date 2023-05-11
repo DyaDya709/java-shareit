@@ -18,36 +18,31 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemRequestController {
-    private static final String requestHeaderUserId = "X-Sharer-User-Id";
+    private static final String REQUEST_HEADER_USER_ID = "X-Sharer-User-Id";
     private final ItemRequestService itemRequestService;
 
     @PostMapping()
-    public ItemRequestDto create(@RequestHeader(requestHeaderUserId) long userId,
+    public ItemRequestDto create(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                  @RequestBody ItemRequestDto request) {
         request.setUserId(userId);
         return itemRequestService.create(request);
     }
 
     @GetMapping
-    public List<ItemRequestDto> getOwnRequests(@RequestHeader(requestHeaderUserId) long userId) {
+    public List<ItemRequestDto> getOwnRequests(@RequestHeader(REQUEST_HEADER_USER_ID) long userId) {
         return itemRequestService.getOwnRequests(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getOtherRequests(@RequestHeader(requestHeaderUserId) long userId,
+    public List<ItemRequestDto> getOtherRequests(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                                  @RequestParam(required = false) Integer from,
                                                  @RequestParam(required = false) Integer size) {
-//        if (from == null || size == null) {
-//            return Collections.emptyList();
-//        } else if (from < 0 || size <= 0) {
-//            throw new BadRequestException("Invalid page request");
-//        }
         Pageable page = PageRequest.of(from / size, size);
         return itemRequestService.getOtherRequests(userId, page);
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestDto getRequestById(@RequestHeader(requestHeaderUserId) long userId,
+    public ItemRequestDto getRequestById(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                          @PathVariable Long requestId) {
         return itemRequestService.getRequestById(userId, requestId);
     }

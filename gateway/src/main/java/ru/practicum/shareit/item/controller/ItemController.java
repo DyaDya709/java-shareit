@@ -19,29 +19,29 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-    private static final String userIdRequestHeader = "X-Sharer-User-Id";
+    private static final String USER_ID_REQUEST_HEADER = "X-Sharer-User-Id";
 
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader(userIdRequestHeader) Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ResponseEntity<Object> create(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId, @Valid @RequestBody ItemDto itemDto) {
         return itemClient.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> update(@RequestHeader(userIdRequestHeader) Long userId,
+    public ResponseEntity<Object> update(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                          @PathVariable Long itemId,
                                          @RequestBody ItemDto itemDto) {
         return itemClient.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> get(@RequestHeader(userIdRequestHeader) Long userId, @PathVariable Long itemId) {
+    public ResponseEntity<Object> get(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId, @PathVariable Long itemId) {
         return itemClient.get(itemId, userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAll(@RequestHeader(userIdRequestHeader) Long userId,
+    public ResponseEntity<Object> getAll(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                          @RequestParam(required = false) Integer from,
                                          @RequestParam(required = false) Integer size) {
         validatePageParameters(from, size);
@@ -49,7 +49,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> findAvailable(@RequestHeader(userIdRequestHeader) Long userId,
+    public ResponseEntity<Object> findAvailable(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                                 @RequestParam(required = false) String text,
                                                 @RequestParam(required = false) Integer from,
                                                 @RequestParam(required = false) Integer size) {
@@ -58,7 +58,7 @@ public class ItemController {
     }
 
     @PostMapping("{itemId}/comment")
-    public ResponseEntity<Object> createComment(@RequestHeader(userIdRequestHeader) Long userId,
+    public ResponseEntity<Object> createComment(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                                 @PathVariable Long itemId,
                                                 @Valid @RequestBody CommentDto commentDto) {
         return itemClient.createComment(userId, itemId, commentDto);

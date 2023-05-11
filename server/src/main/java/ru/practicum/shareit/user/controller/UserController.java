@@ -24,9 +24,6 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public User getUser(@PathVariable("userId") Long userId) {
-//        if (!id.isPresent()) {
-//            throw new BadRequestException("id missing");
-//        }
         return userService.getUser(userId);
     }
 
@@ -37,17 +34,11 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public User update(@PathVariable("userId") Long id, @RequestBody UserDto userDto) {
-//        if (!id.isPresent()) {
-//            throw new BadRequestException("id missing");
-//        }
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{userId}")
     public Boolean remove(@PathVariable("userId") Long id) {
-//        if (!id.isPresent()) {
-//            throw new BadRequestException("id missing");
-//        }
         return userService.remove(id);
     }
 }
