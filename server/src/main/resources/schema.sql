@@ -103,7 +103,7 @@ create table if not exists item_responses
             references item_requests
 );
 
-
+--
 -- truncate table bookings restart identity cascade;
 --
 -- truncate table comments restart identity cascade;
