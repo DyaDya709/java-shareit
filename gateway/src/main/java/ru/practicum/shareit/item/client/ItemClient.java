@@ -40,23 +40,11 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAll(long userId, Integer from, Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
         Map<String, Object> parameters = Map.of("from", from, "size", size);
         return get("?from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> findAvailable(long userId, String text, Integer from, Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
         Map<String, Object> parameters = Map.of("text", text, "from", from, "size", size);
         return get("/search?text={text}&from={from}&size={size}", userId, parameters);
     }

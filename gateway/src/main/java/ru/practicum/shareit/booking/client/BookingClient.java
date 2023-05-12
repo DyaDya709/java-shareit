@@ -40,23 +40,11 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllBorrowerBookings(long userId, BookingFilter filter, Integer from, Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
         Map<String, Object> parameters = Map.of("state", filter, "from", from, "size", size);
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> getAllBookingByOwnerItems(long userId, BookingFilter filter, Integer from, Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
         Map<String, Object> parameters = Map.of(
                 "state", filter,
                 "from", from,

@@ -20,7 +20,8 @@ import javax.validation.Valid;
 @Slf4j
 public class ItemController {
     private static final String USER_ID_REQUEST_HEADER = "X-Sharer-User-Id";
-
+    private static final String DEFAULT_FROM = "0";
+    private static final String DEFAULT_SIZE = "500";
     private final ItemClient itemClient;
 
     @PostMapping
@@ -42,8 +43,10 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Object> getAll(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
-                                         @RequestParam(required = false) Integer from,
-                                         @RequestParam(required = false) Integer size) {
+                                         @RequestParam(defaultValue = DEFAULT_FROM,
+                                                 required = false) Integer from,
+                                         @RequestParam(defaultValue = DEFAULT_SIZE,
+                                                 required = false) Integer size) {
         validatePageParameters(from, size);
         return itemClient.getAll(userId, from, size);
     }
@@ -51,8 +54,10 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<Object> findAvailable(@RequestHeader(USER_ID_REQUEST_HEADER) Long userId,
                                                 @RequestParam(required = false) String text,
-                                                @RequestParam(required = false) Integer from,
-                                                @RequestParam(required = false) Integer size) {
+                                                @RequestParam(defaultValue = DEFAULT_FROM,
+                                                        required = false) Integer from,
+                                                @RequestParam(defaultValue = DEFAULT_SIZE,
+                                                        required = false) Integer size) {
         validatePageParameters(from, size);
         return itemClient.findAvailable(userId, text, from, size);
     }

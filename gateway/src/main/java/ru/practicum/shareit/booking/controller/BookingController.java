@@ -18,6 +18,8 @@ import javax.validation.Valid;
 public class BookingController {
     private static final String REQUEST_HEADER_USER_ID = "X-Sharer-User-Id";
     private final BookingClient bookingClient;
+    private static final String DEFAULT_FROM = "0";
+    private static final String DEFAULT_SIZE = "500";
 
     @PostMapping
     public ResponseEntity<Object> createBooking(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
@@ -37,8 +39,10 @@ public class BookingController {
                                                          @RequestParam(required = false,
                                                                  defaultValue = "ALL",
                                                                  value = "state") String filter,
-                                                         @RequestParam(required = false) Integer from,
-                                                         @RequestParam(required = false) Integer size) {
+                                                         @RequestParam(defaultValue = DEFAULT_FROM,
+                                                                 required = false) Integer from,
+                                                         @RequestParam(defaultValue = DEFAULT_SIZE,
+                                                                 required = false) Integer size) {
         validatePageParameters(from, size);
         BookingFilter bookingFilter = getBookingFilter(filter);
         return bookingClient.getAllBorrowerBookings(userId, bookingFilter, from, size);
@@ -49,8 +53,10 @@ public class BookingController {
                                                             @RequestParam(required = false,
                                                                     defaultValue = "ALL",
                                                                     value = "state") String filter,
-                                                            @RequestParam(required = false) Integer from,
-                                                            @RequestParam(required = false) Integer size) {
+                                                            @RequestParam(defaultValue = DEFAULT_FROM,
+                                                                    required = false) Integer from,
+                                                            @RequestParam(defaultValue = DEFAULT_SIZE,
+                                                                    required = false) Integer size) {
 
         validatePageParameters(from, size);
         BookingFilter bookingFilter = getBookingFilter(filter);
